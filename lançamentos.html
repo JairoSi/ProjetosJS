@@ -3,33 +3,31 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Demandas Suporte N2</title>
+    <title>Lançamentos</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <div id="app">
         <!-- Cabeçalho principal -->
         <header id="main-header">
-            <h1>Demandas Suporte N2</h1>
+            <h1>Lançamentos N2</h1>
         </header>
 
-        <!-- Conteúdo principal dividido em duas colunas -->
+        <!-- Conteúdo principal -->
         <div id="content">
-            <!-- Coluna da esquerda: Lançamentos -->
+            <!-- Seção de lançamentos -->
             <section id="launches">
-                <h2>Lançamentos</h2>
+                <h2>Atividades</h2>
                 <button id="launchButton" onclick="lancarAtividade()">
                     <img src="https://img.icons8.com/color/48/000000/baby-yoda.png" alt="Yoda" class="icon"/>
                     Lançar Atividade
                 </button>
-
-                <!-- Lista de lançamentos que será gerada dinamicamente -->
                 <div id="launchList">
-                    <!-- Os lançamentos serão carregados aqui -->
+                    <!-- Lista de lançamentos será preenchida dinamicamente -->
                 </div>
             </section>
 
-            <!-- Coluna da direita: Calendário -->
+            <!-- Calendário -->
             <section id="calendar-container">
                 <div id="calendar-header">
                     <button id="prevMonth" onclick="changeMonth(-1)">←</button>
@@ -37,13 +35,13 @@
                     <button id="nextMonth" onclick="changeMonth(1)">→</button>
                 </div>
                 <div id="calendar">
-                    <!-- Os dias serão adicionados aqui pelo script -->
+                    <!-- Os dias do calendário serão renderizados aqui -->
                 </div>
             </section>
         </div>
     </div>
 
-    <!-- Incluindo o script JavaScript -->
+    <!-- Incluindo o JS -->
     <script src="script.js"></script>
 </body>
 </html>
