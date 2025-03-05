@@ -1,60 +1,55 @@
-// Função para adicionar um chamado à lista
-function adicionarChamado() {
-    let titulo = document.getElementById("titulo").value;
-    let descricao = document.getElementById("descricao").value;
+const currentMonthElement = document.getElementById("currentMonth");
+const calendarElement = document.getElementById("calendar");
 
-    if (titulo === "" || descricao === "") {
-        alert("Preencha todos os campos!");
-        return;
+// Inicialmente configuramos o mês e ano atuais
+let currentYear = new Date().getFullYear();
+let currentMonth = new Date().getMonth(); // Janeiro é 0, Dezembro é 11
+
+// Atualiza o cabeçalho e o calendário
+function updateCalendar() {
+    // Meses em texto
+    const monthNames = [
+        "Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho",
+        "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"
+    ];
+
+    // Atualiza o cabeçalho
+    currentMonthElement.innerText = `${monthNames[currentMonth]} ${currentYear}`;
+
+    // Limpa o calendário atual
+    calendarElement.innerHTML = "";
+
+    // Obtém o número de dias no mês atual
+    const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
+
+    // Preenche o calendário com os dias do mês
+    for (let day = 1; day <= daysInMonth; day++) {
+        const dayElement = document.createElement("div");
+        dayElement.className = "day";
+        dayElement.innerText = day;
+        calendarElement.appendChild(dayElement);
+    }
+}
+
+// Muda o mês
+function changeMonth(direction) {
+    currentMonth += direction;
+
+    // Se passar de dezembro (11), avança um ano
+    if (currentMonth > 11) {
+        currentMonth = 0;
+        currentYear++;
     }
 
-    let lista = document.getElementById("listaChamados");
-    let item = document.createElement("li");
-    item.innerHTML = `<strong>${titulo}</strong><p>${descricao}</p><button onclick="removerChamado(this)">Finalizar</button>`;
-    
-    lista.appendChild(item);
-
-    // Limpar os campos após adicionar o chamado
-    document.getElementById("titulo").value = "";
-    document.getElementById("descricao").value = "";
-}
-
-// Função para remover um chamado da lista
-function removerChamado(elemento) {
-    elemento.parentElement.remove();
-}
-function adicionarChamado() {
-    let titulo = document.getElementById("titulo").value;
-    let descricao = document.getElementById("descricao").value;
-    let data = document.getElementById("data").value;
-
-    if (titulo === "" || descricao === "" || data === "") {
-        alert("Preencha todos os campos!");
-        return;
+    // Se passar de janeiro (0) para trás, volta um ano
+    if (currentMonth < 0) {
+        currentMonth = 11;
+        currentYear--;
     }
 
-    // Exibir no calendário
-    adicionarAoCalendario(data, titulo, descricao);
-
-    // Limpar os campos após adicionar o chamado
-    document.getElementById("titulo").value = "";
-    document.getElementById("descricao").value = "";
-    document.getElementById("data").value = "";
+    // Atualiza o calendário para o novo mês
+    updateCalendar();
 }
-function adicionarAoCalendario(data, titulo, descricao) {
-    // Verificar se já existe um dia correspondente no calendário
-    let dia = document.getElementById(`calendario-${data}`);
-    if (!dia) {
-        // Criar um novo bloco de dia no calendário
-        dia = document.createElement("div");
-        dia.className = "calendario-dia";
-        dia.id = `calendario-${data}`;
-        dia.innerHTML = `<span class="data">${data}</span>`;
-        document.getElementById("calendario").appendChild(dia);
-    }
 
-    // Adicionar a demanda ao dia correspondente
-    let demanda = document.createElement("div");
-    demanda.innerHTML = `<strong>${titulo}</strong><p>${descricao}</p>`;
-    dia.appendChild(demanda);
-}
+// Inicializa o calendário ao carregar a página
+updateCalendar();
