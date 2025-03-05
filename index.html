@@ -61,13 +61,40 @@
             transform: scale(0.95); /* Leve redução ao clicar */
         }
 
-        /* Ícone do Yoda no canto inferior direito */
+        /* Ícone do Yoda no canto inferior esquerdo */
         #yodaIcon {
             position: fixed; /* Posicionamento fixo em relação à janela de visualização */
             bottom: 10px; /* Espaçamento de 10px a partir da borda inferior */
-            right: 10px; /* Espaçamento de 10px a partir da borda direita */
+            left: 10px; /* Espaçamento de 10px a partir da borda esquerda */
             width: 50px; /* Largura da imagem do ícone */
             height: 50px; /* Altura da imagem do ícone */
+        }
+
+        /* Botão de cadastro no canto inferior direito */
+        #cadastroButton {
+            position: fixed; /* Posicionamento fixo */
+            bottom: 10px; /* Alinhamento inferior */
+            right: 10px; /* Alinhamento à direita */
+            display: inline-block;
+            padding: 10px 20px;
+            font-size: 1rem;
+            font-weight: bold;
+            color: white;
+            background: linear-gradient(45deg, #ff7f50, #ff4500);
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        #cadastroButton:hover {
+            transform: scale(1.05);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.5);
+        }
+
+        #cadastroButton:active {
+            transform: scale(0.95);
         }
     </style>
 </head>
@@ -87,11 +114,18 @@
     
     <!-- Ícone do Yoda -->
     <img id="yodaIcon" src="https://img.icons8.com/fluency/48/000000/baby-yoda.png" alt="Yoda Icon">
+    
+    <!-- Botão de cadastro no canto inferior direito -->
+    <button id="cadastroButton" onclick="irParaCadastro()">Cadastro</button>
 
     <!-- Script de redirecionamento -->
     <script>
         function acessarSistema() {
             window.location.href = "lancamentos.html"; <!-- Redireciona para a página de lançamentos -->
+        }
+        
+        function irParaCadastro() {
+            window.location.href = "cadastro.html"; <!-- Redireciona para a página de cadastro -->
         }
     </script>
 </body>
