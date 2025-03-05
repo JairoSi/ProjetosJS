@@ -1,4 +1,8 @@
-/* Estilos gerais */
+/* ============================
+   Geral: Define o estilo base
+   da página, incluindo fontes,
+   cores de fundo e alinhamento.
+============================ */
 body {
     font-family: Arial, sans-serif;
     margin: 0;
@@ -11,12 +15,19 @@ body {
     min-height: 100vh;
 }
 
+/* ============================
+   Contêiner principal: Define
+   a largura máxima do aplicativo.
+============================ */
 #app {
     width: 90%;
     max-width: 1200px;
 }
 
-/* Cabeçalho principal */
+/* ============================
+   Cabeçalho principal: Aplica
+   estilo ao cabeçalho da página.
+============================ */
 #main-header {
     background: #4a90e2;
     color: #fff;
@@ -31,19 +42,28 @@ body {
     font-size: 2rem;
 }
 
-/* Layout em duas colunas */
+/* ============================
+   Layout principal: Define as
+   duas colunas (lançamentos e
+   calendário) e seu espaçamento.
+============================ */
 #content {
     display: flex;
     gap: 20px;
 }
 
-/* Lançamentos */
+/* ============================
+   Lançamentos: Configura a área
+   para mostrar as atividades,
+   com bordas, espaçamento e sombras.
+============================ */
 #launches {
     flex: 2;
     background: #ffffff;
     padding: 20px;
     border-radius: 8px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    position: relative; /* Necessário para posicionar o botão */
 }
 
 #launches h2 {
@@ -90,7 +110,43 @@ body {
     color: #fff;
 }
 
-/* Calendário */
+/* ============================
+   Botão "Lançar Atividade":
+   Define a aparência do botão
+   no canto inferior esquerdo
+   da área de lançamentos.
+============================ */
+#launchButton {
+    position: absolute;
+    bottom: 10px;
+    left: 10px;
+    display: flex;
+    align-items: center;
+    background-color: #4a90e2;
+    color: white;
+    font-size: 1rem;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+#launchButton:hover {
+    background-color: #357ABD;
+}
+
+#launchButton .icon {
+    width: 24px;
+    height: 24px;
+    margin-right: 10px;
+}
+
+/* ============================
+   Calendário: Configura a área
+   onde os dias serão mostrados,
+   com um grid para organização.
+============================ */
 #calendar-container {
     flex: 1;
     background: #ffffff;
@@ -130,6 +186,34 @@ body {
     color: #fff;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
+
+/* ============================
+   Estilo para dias já passados:
+   Usa um tom mais claro para
+   indicar que o dia já passou.
+============================ */
+.past-day {
+    color: #aaa;
+    background-color: #f0f0f0;
+}
+
+/* ============================
+   Estilo para o dia atual:
+   Destaca o dia de hoje com
+   cor de fundo e borda.
+============================ */
+.today {
+    background-color: #4a90e2;
+    color: white;
+    border: 2px solid #357ABD;
+    font-weight: bold;
+}
+
+/* ============================
+   Cabeçalho do calendário:
+   Configura os botões de navegação
+   e o título com o nome do mês.
+============================ */
 #calendar-header {
     display: flex;
     align-items: center;
