@@ -1,7 +1,7 @@
 // Configuração do cliente Supabase
 // Certifique-se de que o Supabase já está carregado no HTML antes deste script
 const SUPABASE_URL = "https://scbfdducpgnxjzdmnnmv.supabase.co";
-const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNjYmZkZHVjcGdueGp6ZG1ubm12Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDExOTU3NDcsImV4cCI6MjA1Njc3MTc0N30.YMjicsUm6LePBeaOnHCQqN4xSYTX67P9bk0TC5Epo4M";
+const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNjYmZkZHVjcGdueGp6ZG1ubm12Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDExOTU3NDcsImV4cCI6MjA1Njc3MTc0N30.YMjicsUm6LePBeaOnHCQqN4xSYTX67P9bk0TC5Epo4M.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNjYmZkZHVjcGdueGp6ZG1ubm12Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDExOTU3NDcsImV4cCI6MjA1Njc3MTc0N30.YMjicsUm6LePBeaOnHCQqN4xSYTX67P9bk0TC5Epo4M";
 const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
 // IDs dos elementos no HTML
