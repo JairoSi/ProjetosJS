@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Suporte Técnico</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <h1>📌 Sistema de Suporte Técnico</h1>
+
+    <!-- Formulário para Abrir um Novo Chamado -->
+    <div class="formulario">
+        <input type="text" id="titulo" placeholder="Título do Chamado">
+        <textarea id="descricao" placeholder="Descreva o problema"></textarea>
+        <button onclick="adicionarChamado()">Abrir Chamado</button>
+    </div>
+
+    <!-- Lista de Chamados -->
+    <h2>Chamados Abertos</h2>
+    <ul id="listaChamados"></ul>
+
+    <script src="script.js"></script>
+</body>
+</html>
