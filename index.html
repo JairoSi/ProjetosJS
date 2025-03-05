@@ -3,47 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Demandas Suporte N2</title>
+    <title>Página Inicial</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div id="app">
-        <!-- Cabeçalho principal -->
-        <header id="main-header">
-            <h1>Demandas Suporte N2</h1>
-        </header>
-
-        <!-- Conteúdo principal dividido em duas colunas -->
-        <div id="content">
-            <!-- Coluna da esquerda: Lançamentos -->
-            <section id="launches">
-                <h2>Lançamentos</h2>
-                <button id="launchButton" onclick="lancarAtividade()">
-                    <img src="https://img.icons8.com/color/48/000000/baby-yoda.png" alt="Yoda" class="icon"/>
-                    Lançar Atividade
-                </button>
-
-                <!-- Lista de lançamentos que será gerada dinamicamente -->
-                <div id="launchList">
-                    <!-- Os lançamentos serão carregados aqui -->
-                </div>
-            </section>
-
-            <!-- Coluna da direita: Calendário -->
-            <section id="calendar-container">
-                <div id="calendar-header">
-                    <button id="prevMonth" onclick="changeMonth(-1)">←</button>
-                    <h2 id="currentMonth"></h2>
-                    <button id="nextMonth" onclick="changeMonth(1)">→</button>
-                </div>
-                <div id="calendar">
-                    <!-- Os dias serão adicionados aqui pelo script -->
-                </div>
-            </section>
-        </div>
-    </div>
-
-    <!-- Incluindo o script JavaScript -->
-    <script src="script.js"></script>
+    <header>
+        <h1>Bem-vindo ao Suporte N2</h1>
+    </header>
+    <main>
+        <p>Por favor, faça login para acessar o sistema de lançamentos do N2.</p>
+        <button onclick="acessarSistema()">Acessar</button>
+    </main>
+    <script>
+        function acessarSistema() {
+            // Redirecionar para a página de lançamentos existente
+            window.location.href = "lancamentos.html";
+        }
+    </script>
 </body>
 </html>
