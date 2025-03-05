@@ -116,30 +116,40 @@ body {
    no canto inferior esquerdo
    da área de lançamentos.
 ============================ */
+/* Botão “Lançar Atividade” - Design aprimorado e flutuante */
 #launchButton {
-    position: absolute;
-    bottom: 10px;
-    left: 10px;
+    position: fixed; /* Flutuando sobre o conteúdo */
+    bottom: 20px;
+    left: 20px;
     display: flex;
     align-items: center;
-    background-color: #4a90e2;
+    justify-content: center;
+    background: linear-gradient(145deg, #4a90e2, #357ABD);
     color: white;
-    font-size: 1rem;
-    padding: 10px 20px;
+    font-size: 1.2rem;
+    font-weight: bold;
+    padding: 15px 30px;
     border: none;
-    border-radius: 5px;
+    border-radius: 25px;
     cursor: pointer;
-    transition: background-color 0.3s ease;
+    transition: all 0.3s ease;
+    box-shadow: 0 10px 15px rgba(0, 0, 0, 0.2);
+    z-index: 1000; /* Certifique-se de que está acima de outros elementos */
 }
 
 #launchButton:hover {
-    background-color: #357ABD;
+    box-shadow: 0 15px 20px rgba(0, 0, 0, 0.3);
+    background: linear-gradient(145deg, #357ABD, #4a90e2);
+}
+
+#launchButton:active {
+    transform: scale(0.95);
 }
 
 #launchButton .icon {
-    width: 24px;
-    height: 24px;
-    margin-right: 10px;
+    width: 32px;
+    height: 32px;
+    margin-right: 15px;
 }
 
 /* ============================
@@ -240,4 +250,38 @@ body {
     margin: 0;
     font-size: 1.5rem;
     color: #4a90e2;
+}
+/* Estilo do formulário */
+#activityForm {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+#activityForm label {
+    font-weight: bold;
+    color: #4a90e2;
+}
+
+#activityForm input,
+#activityForm textarea,
+#activityForm button {
+    font-size: 1rem;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+}
+
+#activityForm button {
+    background: #4a90e2;
+    color: white;
+    font-size: 1.2rem;
+    font-weight: bold;
+    cursor: pointer;
+    border: none;
+    transition: background-color 0.3s ease;
+}
+
+#activityForm button:hover {
+    background: #357ABD;
 }
