@@ -3,23 +3,71 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Suporte Técnico</title>
+    <title>Demandas Suporte N2</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <h1>📌 Sistema de Suporte Técnico</h1>
+    <div id="app">
+        <!-- Cabeçalho principal -->
+        <header id="main-header">
+            <h1>Demandas Suporte N2</h1>
+        </header>
 
-    <!-- Formulário para Abrir um Novo Chamado -->
-    <div class="formulario">
-        <input type="text" id="titulo" placeholder="Título do Chamado">
-        <textarea id="descricao" placeholder="Descreva o problema"></textarea>
-        <button onclick="adicionarChamado()">Abrir Chamado</button>
+        <!-- Conteúdo em duas colunas -->
+        <div id="content">
+            <!-- Coluna da esquerda: Lançamentos -->
+            <section id="launches">
+                <h2>Lançamentos</h2>
+                <div class="launch">
+                    <h3>Título da Atividade</h3>
+                    <p>Descrição breve do que precisa ser feito.</p>
+                    <span class="status pending">Pendente</span>
+                </div>
+                <div class="launch">
+                    <h3>Título da Atividade</h3>
+                    <p>Descrição breve do que foi feito.</p>
+                    <span class="status done">Concluído</span>
+                </div>
+            </section>
+
+            <!-- Coluna da direita: Calendário -->
+            <section id="calendar-container">
+                <h2 id="currentMonth">Março 2025</h2>
+                <div id="calendar">
+                    <div class="day">1</div>
+                    <div class="day">2</div>
+                    <div class="day">3</div>
+                    <div class="day">4</div>
+                    <div class="day">5</div>
+                    <div class="day">6</div>
+                    <div class="day">7</div>
+                    <div class="day">8</div>
+                    <div class="day">9</div>
+                    <div class="day">10</div>
+                    <div class="day">11</div>
+                    <div class="day">12</div>
+                    <div class="day">13</div>
+                    <div class="day">14</div>
+                    <div class="day">15</div>
+                    <div class="day">16</div>
+                    <div class="day">17</div>
+                    <div class="day">18</div>
+                    <div class="day">19</div>
+                    <div class="day">20</div>
+                    <div class="day">21</div>
+                    <div class="day">22</div>
+                    <div class="day">23</div>
+                    <div class="day">24</div>
+                    <div class="day">25</div>
+                    <div class="day">26</div>
+                    <div class="day">27</div>
+                    <div class="day">28</div>
+                    <div class="day">29</div>
+                    <div class="day">30</div>
+                    <div class="day">31</div>
+                </div>
+            </section>
+        </div>
     </div>
-
-    <!-- Lista de Chamados -->
-    <h2>Chamados Abertos</h2>
-    <ul id="listaChamados"></ul>
-
-    <script src="script.js"></script>
 </body>
 </html>

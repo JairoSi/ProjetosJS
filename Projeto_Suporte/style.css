@@ -1,39 +1,132 @@
+/* Estilos gerais */
 body {
     font-family: Arial, sans-serif;
-    text-align: center;
-    background-color: #f4f4f4;
-    margin: 20px;
-}
-h1 {
-    color: #007BFF;
-}
-.formulario {
-    margin: 20px;
-}
-input, textarea, button {
-    width: 80%;
-    margin: 10px;
-    padding: 10px;
-    border-radius: 5px;
-    border: 1px solid #ddd;
-}
-button {
-    background-color: #28a745;
-    color: white;
-    cursor: pointer;
-}
-button:hover {
-    background-color: #218838;
-}
-ul {
-    list-style: none;
+    margin: 0;
     padding: 0;
+    background: #f4f7f9;
+    color: #333;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
 }
-li {
-    background: white;
-    padding: 10px;
-    margin: 10px auto;
-    width: 80%;
-    border-radius: 5px;
-    box-shadow: 0 0 5px rgba(0,0,0,0.1);
+
+#app {
+    width: 90%;
+    max-width: 1200px;
+}
+
+/* Cabeçalho principal */
+#main-header {
+    background: #4a90e2;
+    color: #fff;
+    text-align: center;
+    padding: 20px;
+    margin-bottom: 20px;
+    border-radius: 8px;
+}
+
+#main-header h1 {
+    margin: 0;
+    font-size: 2rem;
+}
+
+/* Layout em duas colunas */
+#content {
+    display: flex;
+    gap: 20px;
+}
+
+/* Lançamentos */
+#launches {
+    flex: 2;
+    background: #ffffff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+#launches h2 {
+    font-size: 1.5rem;
+    color: #4a90e2;
+    margin-bottom: 10px;
+}
+
+.launch {
+    background: #f9f9f9;
+    padding: 10px 15px;
+    margin-bottom: 10px;
+    border-radius: 4px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.launch h3 {
+    margin: 0;
+    font-size: 1.2rem;
+    color: #4a90e2;
+}
+
+.launch p {
+    margin: 5px 0;
+    font-size: 1rem;
+    color: #666;
+}
+
+.launch .status {
+    font-size: 0.9rem;
+    padding: 3px 6px;
+    border-radius: 3px;
+    margin-top: 5px;
+    display: inline-block;
+}
+
+.status.pending {
+    background: #ffc107;
+    color: #fff;
+}
+
+.status.done {
+    background: #28a745;
+    color: #fff;
+}
+
+/* Calendário */
+#calendar-container {
+    flex: 1;
+    background: #ffffff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+#calendar-container h2 {
+    font-size: 1.5rem;
+    color: #4a90e2;
+    margin-bottom: 10px;
+}
+
+#calendar {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 10px;
+}
+
+.day {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100px;
+    background: #eaf2f8;
+    color: #333;
+    font-size: 1.2rem;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.3s ease-in-out;
+}
+
+.day:hover {
+    background: #4a90e2;
+    color: #fff;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
