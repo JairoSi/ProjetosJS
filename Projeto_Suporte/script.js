@@ -1,3 +1,8 @@
+// Configuração do cliente Supabase
+const SUPABASE_URL = "https://scbfdducpgnxjzdmnnmv.supabase.co";
+const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNjYmZkZHVjcGdueGp6ZG1ubm12Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDExOTU3NDcsImV4cCI6MjA1Njc3MTc0N30.YMjicsUm6LePBeaOnHCQqN4xSYTX67P9bk0TC5Epo4M";
+const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
 // Seletores para os elementos do cabeçalho e do calendário
 const currentMonthElement = document.getElementById("currentMonth");
 const calendarElement = document.getElementById("calendar");
@@ -6,8 +11,29 @@ const calendarElement = document.getElementById("calendar");
 let currentYear = new Date().getFullYear();
 let currentMonth = new Date().getMonth(); // Janeiro é 0, Dezembro é 11
 
+// Função para carregar lançamentos do banco de dados
+async function carregarLancamentos() {
+    try {
+        // Busca os lançamentos do banco
+        const { data: lancamentos, error } = await supabase
+            .from("lancamentos")
+            .select("*")
+            .eq("data", `${currentYear}-${String(currentMonth + 1).padStart(2, "0")}`);
+
+        if (error) {
+            console.error("Erro ao carregar lançamentos:", error);
+            return [];
+        }
+
+        return lancamentos;
+    } catch (err) {
+        console.error("Erro inesperado ao carregar lançamentos:", err);
+        return [];
+    }
+}
+
 // Função para atualizar o calendário e o cabeçalho com o mês atual
-function updateCalendar() {
+async function updateCalendar() {
     // Array com os nomes dos meses
     const monthNames = [
         "Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho",
@@ -27,6 +53,10 @@ function updateCalendar() {
     const today = new Date();
     const isCurrentMonth = currentMonth === today.getMonth() && currentYear === today.getFullYear();
 
+    // Carrega lançamentos para o mês atual
+    const lancamentos = await carregarLancamentos();
+    const diasComAtividade = lancamentos.map(l => new Date(l.data).getDate());
+
     // Itera sobre os dias do mês, criando elementos para cada dia
     for (let day = 1; day <= daysInMonth; day++) {
         const dayElement = document.createElement("div");
@@ -41,6 +71,11 @@ function updateCalendar() {
         // Adiciona a classe "today" para o dia atual
         if (isCurrentMonth && day === today.getDate()) {
             dayElement.classList.add("today");
+        }
+
+        // Destaca dias com atividades
+        if (diasComAtividade.includes(day)) {
+            dayElement.classList.add("active-day");
         }
 
         // Adiciona o elemento do dia ao calendário

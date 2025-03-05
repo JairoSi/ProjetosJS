@@ -1,17 +1,14 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <!-- Configuração básica do documento -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Demandas Suporte N2</title>
-    <!-- Importando os estilos para personalizar a aparência -->
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <div id="app">
         <!-- Cabeçalho principal -->
-        <!-- Apresenta o título geral do sistema -->
         <header id="main-header">
             <h1>Demandas Suporte N2</h1>
         </header>
@@ -20,39 +17,25 @@
         <div id="content">
             <!-- Coluna da esquerda: Lançamentos -->
             <section id="launches">
-                <!-- Título da seção de lançamentos -->
                 <h2>Lançamentos</h2>
-                <!-- Botão para criar uma nova atividade de suporte -->
                 <button id="launchButton" onclick="lancarAtividade()">
-                    <!-- Ícone ilustrativo ao lado do texto -->
                     <img src="https://img.icons8.com/color/48/000000/baby-yoda.png" alt="Yoda" class="icon"/>
                     Lançar Atividade
                 </button>
-                <!-- Lista de lançamentos existentes -->
-                <div class="launch">
-                    <h3>Título da Atividade</h3>
-                    <p>Descrição breve do que precisa ser feito.</p>
-                    <span class="status pending">Pendente</span>
+
+                <!-- Lista de lançamentos que será gerada dinamicamente -->
+                <div id="launchList">
+                    <!-- Os lançamentos serão carregados aqui -->
                 </div>
-                <div class="launch">
-                    <h3>Título da Atividade</h3>
-                    <p>Descrição breve do que foi feito.</p>
-                    <span class="status done">Concluído</span>
-                </div>
-            </section>            
+            </section>
 
             <!-- Coluna da direita: Calendário -->
             <section id="calendar-container">
-                <!-- Cabeçalho do calendário com controles de navegação -->
                 <div id="calendar-header">
-                    <!-- Botão para retroceder um mês -->
                     <button id="prevMonth" onclick="changeMonth(-1)">←</button>
-                    <!-- Título do mês atual -->
                     <h2 id="currentMonth"></h2>
-                    <!-- Botão para avançar um mês -->
                     <button id="nextMonth" onclick="changeMonth(1)">→</button>
                 </div>
-                <!-- Grade do calendário, preenchida dinamicamente -->
                 <div id="calendar">
                     <!-- Os dias serão adicionados aqui pelo script -->
                 </div>
@@ -61,7 +44,6 @@
     </div>
 
     <!-- Incluindo o script JavaScript -->
-    <!-- Esse script controla o calendário, botão de lançamento e outras interações -->
     <script src="script.js"></script>
 </body>
 </html>

@@ -63,7 +63,6 @@ body {
     padding: 20px;
     border-radius: 8px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    position: relative; /* Necessário para posicionar o botão */
 }
 
 #launches h2 {
@@ -116,11 +115,7 @@ body {
    no canto inferior esquerdo
    da área de lançamentos.
 ============================ */
-/* Botão “Lançar Atividade” - Design aprimorado e flutuante */
 #launchButton {
-    position: fixed; /* Flutuando sobre o conteúdo */
-    bottom: 20px;
-    left: 20px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -134,7 +129,6 @@ body {
     cursor: pointer;
     transition: all 0.3s ease;
     box-shadow: 0 10px 15px rgba(0, 0, 0, 0.2);
-    z-index: 1000; /* Certifique-se de que está acima de outros elementos */
 }
 
 #launchButton:hover {
@@ -251,37 +245,14 @@ body {
     font-size: 1.5rem;
     color: #4a90e2;
 }
-/* Estilo do formulário */
-#activityForm {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-}
 
-#activityForm label {
-    font-weight: bold;
-    color: #4a90e2;
-}
-
-#activityForm input,
-#activityForm textarea,
-#activityForm button {
-    font-size: 1rem;
-    padding: 10px;
-    border: 1px solid #ddd;
-    border-radius: 5px;
-}
-
-#activityForm button {
-    background: #4a90e2;
+/* ============================
+   Dias com atividades:
+   Estilo adicional para destacar
+   dias com lançamentos no calendário.
+============================ */
+.active-day {
+    background-color: #4caf50;
     color: white;
-    font-size: 1.2rem;
     font-weight: bold;
-    cursor: pointer;
-    border: none;
-    transition: background-color 0.3s ease;
-}
-
-#activityForm button:hover {
-    background: #357ABD;
 }
