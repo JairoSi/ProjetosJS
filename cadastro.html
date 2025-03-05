@@ -4,9 +4,140 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cadastro</title>
+    <style>
+        /* Estilo geral da página */
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background: #1a1a1a; /* Fundo escuro suave */
+            color: #fff; /* Texto branco */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            text-align: center;
+        }
+
+        /* Cabeçalho */
+        header {
+            font-size: 2.5rem;
+            color: #4caf50; /* Verde tecnológico */
+            margin-bottom: 20px;
+        }
+
+        /* Contêiner do formulário */
+        .form-container {
+            background: #333; /* Fundo levemente mais claro que o fundo principal */
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+            width: 100%;
+            max-width: 400px;
+        }
+
+        /* Formulário */
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        /* Rótulos e campos de entrada */
+        label {
+            font-weight: bold;
+            color: #4caf50; /* Verde tecnológico */
+            margin-bottom: 5px;
+        }
+
+        input {
+            padding: 10px;
+            font-size: 1rem;
+            border: none;
+            border-radius: 5px;
+            background: #555; /* Fundo dos campos */
+            color: #fff;
+        }
+
+        input:focus {
+            outline: none;
+            background: #4caf50;
+            color: #1a1a1a; /* Texto escuro para contraste */
+        }
+
+        /* Botão de cadastro */
+        button {
+            background: #4caf50;
+            color: #1a1a1a; /* Texto escuro para contraste */
+            font-size: 1rem;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.5);
+        }
+
+        button:active {
+            transform: scale(0.95);
+        }
+
+        /* Mensagem de status */
+        #mensagem {
+            margin-top: 15px;
+            font-size: 0.9rem;
+            color: #4caf50; /* Verde para mensagens de sucesso */
+        }
+    </style>
 </head>
 <body>
-    <h1>Página de Cadastro</h1>
-    <p>Essa é a página onde você poderá se cadastrar.</p>
+    <header>Cadastro</header>
+    <div class="form-container">
+        <form id="cadastroForm">
+            <label for="nome">Nome:</label>
+            <input type="text" id="nome" placeholder="Digite seu nome" required>
+            
+            <label for="email">E-mail:</label>
+            <input type="email" id="email" placeholder="Digite seu e-mail" required>
+            
+            <label for="senha">Senha:</label>
+            <input type="password" id="senha" placeholder="Digite sua senha" required>
+            
+            <button type="submit">Cadastrar</button>
+        </form>
+        <p id="mensagem"></p>
+    </div>
+
+    <script>
+        // Inicialize o cliente do Supabase (adicione sua URL e chave)
+        const SUPABASE_URL = "https://<sua-url>.supabase.co";
+        const SUPABASE_KEY = "<sua-chave-anonima>";
+        const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+        document.getElementById('cadastroForm').addEventListener('submit', async function(event) {
+            event.preventDefault();
+            
+            const nome = document.getElementById('nome').value;
+            const email = document.getElementById('email').value;
+            const senha = document.getElementById('senha').value;
+            const mensagem = document.getElementById('mensagem');
+            
+            // Supabase sign-up
+            const { error } = await supabase.auth.signUp({ email: email, password: senha });
+            
+            if (error) {
+                mensagem.textContent = 'Erro no cadastro: ' + error.message;
+                mensagem.style.color = 'red';
+            } else {
+                mensagem.textContent = 'Cadastro realizado com sucesso! Verifique seu email para ativar sua conta.';
+            }
+        });
+    </script>
 </body>
 </html>
