@@ -3,11 +3,47 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Meu Projeto</title>
+    <title>Demandas Suporte N2</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <h1>Olá, mundo!</h1>
-    <p>Meu primeiro projeto no VS Code local.</p>
+    <div id="app">
+        <!-- Cabeçalho principal -->
+        <header id="main-header">
+            <h1>Demandas Suporte N2</h1>
+        </header>
+
+        <!-- Conteúdo principal dividido em duas colunas -->
+        <div id="content">
+            <!-- Coluna da esquerda: Lançamentos -->
+            <section id="launches">
+                <h2>Lançamentos</h2>
+                <button id="launchButton" onclick="lancarAtividade()">
+                    <img src="https://img.icons8.com/color/48/000000/baby-yoda.png" alt="Yoda" class="icon"/>
+                    Lançar Atividade
+                </button>
+
+                <!-- Lista de lançamentos que será gerada dinamicamente -->
+                <div id="launchList">
+                    <!-- Os lançamentos serão carregados aqui -->
+                </div>
+            </section>
+
+            <!-- Coluna da direita: Calendário -->
+            <section id="calendar-container">
+                <div id="calendar-header">
+                    <button id="prevMonth" onclick="changeMonth(-1)">←</button>
+                    <h2 id="currentMonth"></h2>
+                    <button id="nextMonth" onclick="changeMonth(1)">→</button>
+                </div>
+                <div id="calendar">
+                    <!-- Os dias serão adicionados aqui pelo script -->
+                </div>
+            </section>
+        </div>
+    </div>
+
+    <!-- Incluindo o script JavaScript -->
+    <script src="script.js"></script>
 </body>
 </html>
