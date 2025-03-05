@@ -5,58 +5,48 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Bem-vindo ao Suporte N2</title>
     <style>
+        /* Estilo geral da página */
         body {
             font-family: 'Arial', sans-serif;
             margin: 0;
             padding: 0;
-            background: #1a1a1a; /* Fundo escuro, agradável para olhos */
-            color: #fff; /* Contraste suave */
+            background: #1a1a1a; /* Fundo escuro suave */
+            color: #fff;
             display: flex;
-            justify-content: center;
+            flex-direction: column;
             align-items: center;
+            justify-content: center;
             height: 100vh;
-            overflow: hidden;
-        }
-
-        header {
             text-align: center;
-            margin-bottom: 30px;
         }
 
-        header h1 {
+        /* Cabeçalho */
+        header {
             font-size: 2.5rem;
             color: #4caf50; /* Verde tecnológico */
-            margin: 0;
-        }
-
-        main {
-            text-align: center;
-        }
-
-        main p {
-            font-size: 1.2rem;
-            color: #ccc;
             margin-bottom: 20px;
         }
 
-        #acessoButton {
-            display: inline-flex;
-            align-items: center;
-            padding: 10px 20px;
+        /* Texto explicativo */
+        #intro {
             font-size: 1.2rem;
-            color: #fff;
-            background: linear-gradient(45deg, #4caf50, #3e8e41); /* Efeito gradiente */
+            color: #ccc;
+            margin-bottom: 40px;
+        }
+
+        /* Botão de acesso */
+        #acessoButton {
+            display: inline-block;
+            padding: 15px 30px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: white;
+            background: linear-gradient(45deg, #4caf50, #357ABD);
             border: none;
             border-radius: 5px;
             cursor: pointer;
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
             transition: transform 0.2s, box-shadow 0.2s;
-        }
-
-        #acessoButton img {
-            width: 24px;
-            height: 24px;
-            margin-right: 10px;
         }
 
         #acessoButton:hover {
@@ -67,19 +57,30 @@
         #acessoButton:active {
             transform: scale(0.95);
         }
+
+        /* Ícone do Yoda no canto inferior direito */
+        #yodaIcon {
+            position: fixed;
+            bottom: 10px;
+            right: 10px;
+            width: 50px;
+            height: 50px;
+        }
     </style>
 </head>
 <body>
     <header>
-        <h1>Bem-vindo ao Suporte N2</h1>
+        Bem-vindo ao Suporte N2
     </header>
-    <main>
-        <p>Por favor, faça login para acessar o sistema de lançamentos do N2.</p>
-        <button id="acessoButton" onclick="acessarSistema()">
-            <img src="https://img.icons8.com/fluency/48/000000/enter.png" alt="Acessar" />
-            Acessar
-        </button>
-    </main>
+
+    <div id="intro">
+        Por favor, faça login para acessar o sistema de lançamentos do N2.
+    </div>
+
+    <button id="acessoButton" onclick="acessarSistema()">Acessar</button>
+    
+    <img id="yodaIcon" src="https://img.icons8.com/fluency/48/000000/baby-yoda.png" alt="Yoda Icon">
+
     <script>
         function acessarSistema() {
             window.location.href = "lancamentos.html";
