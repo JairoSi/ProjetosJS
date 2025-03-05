@@ -3,23 +3,25 @@ const SUPABASE_URL = "https://scbfdducpgnxjzdmnnmv.supabase.co";
 const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNjYmZkZHVjcGdueGp6ZG1ubm12Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDExOTU3NDcsImV4cCI6MjA1Njc3MTc0N30.YMjicsUm6LePBeaOnHCQqN4xSYTX67P9bk0TC5Epo4M";
 const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-// Seletores para os elementos do cabeçalho e do calendário
+// Seletores para os elementos do calendário e cabeçalho
 const currentMonthElement = document.getElementById("currentMonth");
 const calendarElement = document.getElementById("calendar");
 
-// Configuramos inicialmente o mês e o ano atuais
+// Variáveis para controlar o mês e o ano atuais
 let currentYear = new Date().getFullYear();
-let currentMonth = new Date().getMonth(); // Janeiro é 0, Dezembro é 11
+let currentMonth = new Date().getMonth(); // Janeiro = 0, Dezembro = 11
 
-// Função para carregar lançamentos do banco de dados
+/**
+ * Busca lançamentos do banco de dados para o mês atual
+ */
 async function carregarLancamentos() {
     try {
-        // Busca os lançamentos do banco
         const { data: lancamentos, error } = await supabase
             .from("lancamentos")
             .select("*")
-            .eq("data", `${currentYear}-${String(currentMonth + 1).padStart(2, "0")}`);
-
+            .gte("data", `${currentYear}-${String(currentMonth + 1).padStart(2, "0")}-01`)
+            .lte("data", `${currentYear}-${String(currentMonth + 1).padStart(2, "0")}-31`);
+        
         if (error) {
             console.error("Erro ao carregar lançamentos:", error);
             return [];
@@ -32,68 +34,73 @@ async function carregarLancamentos() {
     }
 }
 
-// Função para atualizar o calendário e o cabeçalho com o mês atual
+/**
+ * Atualiza o calendário para o mês e ano atuais
+ */
 async function updateCalendar() {
-    // Array com os nomes dos meses
+    // Nomes dos meses
     const monthNames = [
         "Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho",
         "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"
     ];
 
-    // Atualiza o texto do cabeçalho com o mês e o ano atual
+    // Atualiza o título do mês atual
     currentMonthElement.innerText = `${monthNames[currentMonth]} ${currentYear}`;
 
-    // Limpa o conteúdo do calendário para preencher com novos dias
+    // Limpa o calendário existente
     calendarElement.innerHTML = "";
 
     // Calcula o número de dias no mês atual
     const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
 
-    // Obtém a data de hoje para destacar o dia atual e os dias já passados
+    // Obtém a data de hoje
     const today = new Date();
-    const isCurrentMonth = currentMonth === today.getMonth() && currentYear === today.getFullYear();
+    const isCurrentMonth = (currentMonth === today.getMonth() && currentYear === today.getFullYear());
 
-    // Carrega lançamentos para o mês atual
+    // Busca os lançamentos para o mês atual
     const lancamentos = await carregarLancamentos();
     const diasComAtividade = lancamentos.map(l => new Date(l.data).getDate());
 
-    // Itera sobre os dias do mês, criando elementos para cada dia
+    // Preenche o calendário com os dias do mês
     for (let day = 1; day <= daysInMonth; day++) {
         const dayElement = document.createElement("div");
         dayElement.className = "day";
         dayElement.innerText = day;
 
-        // Adiciona a classe "past-day" se o dia já passou
+        // Adiciona classe para dias passados
         if (isCurrentMonth && day < today.getDate()) {
             dayElement.classList.add("past-day");
         }
 
-        // Adiciona a classe "today" para o dia atual
+        // Adiciona classe para o dia atual
         if (isCurrentMonth && day === today.getDate()) {
             dayElement.classList.add("today");
         }
 
-        // Destaca dias com atividades
+        // Adiciona classe para dias com atividades
         if (diasComAtividade.includes(day)) {
             dayElement.classList.add("active-day");
         }
 
-        // Adiciona o elemento do dia ao calendário
+        // Insere o dia no calendário
         calendarElement.appendChild(dayElement);
     }
 }
 
-// Função para mudar o mês
+/**
+ * Muda o mês exibido no calendário
+ * @param {number} direction - 1 para próximo mês, -1 para mês anterior
+ */
 function changeMonth(direction) {
     currentMonth += direction;
 
-    // Se passar de dezembro, avança um ano
+    // Verifica se passou de dezembro e ajusta o ano
     if (currentMonth > 11) {
         currentMonth = 0;
         currentYear++;
     }
 
-    // Se passar de janeiro para trás, volta um ano
+    // Verifica se passou de janeiro para trás e ajusta o ano
     if (currentMonth < 0) {
         currentMonth = 11;
         currentYear--;
@@ -103,11 +110,5 @@ function changeMonth(direction) {
     updateCalendar();
 }
 
-// Função de exemplo para quando o botão de "Lançar Atividade" for clicado
-function lancarAtividade() {
-    // Mensagem simples para demonstrar o evento
-    alert("Atividade lançada com sucesso!");
-}
-
-// Inicializa o calendário quando a página for carregada
+// Inicializa o calendário ao carregar a página
 updateCalendar();
