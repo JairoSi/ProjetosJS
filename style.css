@@ -110,43 +110,6 @@ body {
 }
 
 /* ============================
-   Botão "Lançar Atividade":
-   Define a aparência do botão
-   no canto inferior esquerdo
-   da área de lançamentos.
-============================ */
-#launchButton {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: linear-gradient(145deg, #4a90e2, #357ABD);
-    color: white;
-    font-size: 1.2rem;
-    font-weight: bold;
-    padding: 15px 30px;
-    border: none;
-    border-radius: 25px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    box-shadow: 0 10px 15px rgba(0, 0, 0, 0.2);
-}
-
-#launchButton:hover {
-    box-shadow: 0 15px 20px rgba(0, 0, 0, 0.3);
-    background: linear-gradient(145deg, #357ABD, #4a90e2);
-}
-
-#launchButton:active {
-    transform: scale(0.95);
-}
-
-#launchButton .icon {
-    width: 32px;
-    height: 32px;
-    margin-right: 15px;
-}
-
-/* ============================
    Calendário: Configura a área
    onde os dias serão mostrados,
    com um grid para organização.
@@ -191,66 +154,19 @@ body {
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
-/* ============================
-   Estilo para dias já passados:
-   Usa um tom mais claro para
-   indicar que o dia já passou.
-============================ */
 .past-day {
     color: #aaa;
-    background-color: #f0f0f0;
+    background-color: #dcdcdc;
+    text-decoration: line-through;
 }
 
-/* ============================
-   Estilo para o dia atual:
-   Destaca o dia de hoje com
-   cor de fundo e borda.
-============================ */
 .today {
-    background-color: #4a90e2;
-    color: white;
-    border: 2px solid #357ABD;
+    background-color: #ffeb3b;
+    color: black;
+    border: 2px solid #ff9800;
     font-weight: bold;
 }
 
-/* ============================
-   Cabeçalho do calendário:
-   Configura os botões de navegação
-   e o título com o nome do mês.
-============================ */
-#calendar-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 10px;
-}
-
-#calendar-header button {
-    background: #4a90e2;
-    color: white;
-    border: none;
-    padding: 5px 10px;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 1rem;
-    transition: background 0.3s ease;
-}
-
-#calendar-header button:hover {
-    background: #357ABD;
-}
-
-#calendar-header h2 {
-    margin: 0;
-    font-size: 1.5rem;
-    color: #4a90e2;
-}
-
-/* ============================
-   Dias com atividades:
-   Estilo adicional para destacar
-   dias com lançamentos no calendário.
-============================ */
 .active-day {
     background-color: #4caf50;
     color: white;
