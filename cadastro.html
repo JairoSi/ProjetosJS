@@ -4,32 +4,25 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cadastro</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
     <style>
-        /* Estilo geral da página */
+        /* Estilos gerais */
         body {
             font-family: 'Arial', sans-serif;
-            margin: 0;
-            padding: 0;
-            background: #1a1a1a; /* Fundo escuro suave */
-            color: #fff; /* Texto branco */
+            background: #1a1a1a;
+            color: #fff;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
             height: 100vh;
             text-align: center;
+            margin: 0;
         }
 
-        /* Cabeçalho */
-        header {
-            font-size: 2.5rem;
-            color: #4caf50; /* Verde tecnológico */
-            margin-bottom: 20px;
-        }
-
-        /* Contêiner do formulário */
+        /* Container do formulário */
         .form-container {
-            background: #333; /* Fundo levemente mais claro que o fundo principal */
+            background: #333;
             padding: 20px;
             border-radius: 10px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
@@ -37,39 +30,40 @@
             max-width: 400px;
         }
 
-        /* Formulário */
+        /* Estilização do formulário */
         form {
             display: flex;
             flex-direction: column;
             gap: 15px;
         }
 
-        /* Rótulos e campos de entrada */
+        /* Rótulos */
         label {
             font-weight: bold;
-            color: #4caf50; /* Verde tecnológico */
+            color: #4caf50;
             margin-bottom: 5px;
         }
 
+        /* Campos de entrada */
         input {
             padding: 10px;
             font-size: 1rem;
             border: none;
             border-radius: 5px;
-            background: #555; /* Fundo dos campos */
+            background: #555;
             color: #fff;
         }
 
         input:focus {
             outline: none;
             background: #4caf50;
-            color: #1a1a1a; /* Texto escuro para contraste */
+            color: #1a1a1a;
         }
 
         /* Botão de cadastro */
         button {
             background: #4caf50;
-            color: #1a1a1a; /* Texto escuro para contraste */
+            color: #1a1a1a;
             font-size: 1rem;
             padding: 10px;
             border: none;
@@ -92,56 +86,67 @@
         #mensagem {
             margin-top: 15px;
             font-size: 0.9rem;
-            color: #4caf50; /* Verde para mensagens de sucesso */
         }
     </style>
-    <!-- Adiciona a biblioteca do Supabase -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
 </head>
 <body>
-    <header>Cadastro</header>
+
+    <header>
+        <h2>Cadastro</h2>
+    </header>
+
     <div class="form-container">
         <form id="cadastroForm">
             <label for="nome">Nome:</label>
             <input type="text" id="nome" placeholder="Digite seu nome" required>
-            
+
             <label for="email">E-mail:</label>
             <input type="email" id="email" placeholder="Digite seu e-mail" required>
-            
+
             <label for="senha">Senha:</label>
             <input type="password" id="senha" placeholder="Digite sua senha" required>
-            
+
             <button type="submit">Cadastrar</button>
         </form>
         <p id="mensagem"></p>
     </div>
 
     <script>
-        document.addEventListener("DOMContentLoaded", () => {
-            // Inicialize o cliente do Supabase (adicione sua URL e chave)
-            const SUPABASE_URL = "https://scbfdducpgnxjzdmnnmv.supabase.co";
-            const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNjYmZkZHVjcGdueGp6ZG1ubm12Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDExOTU3NDcsImV4cCI6MjA1Njc3MTc0N30.YMjicsUm6LePBeaOnHCQqN4xSYTX67P9bk0TC5Epo4M";
-            const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        // Configuração do Supabase
+        const SUPABASE_URL = "https://scbfdducpgnxjzdmnnmv.supabase.co";
+        const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNjYmZkZHVjcGdueGp6ZG1ubm12Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDExOTU3NDcsImV4cCI6MjA1Njc3MTc0N30.YMjicsUm6LePBeaOnHCQqN4xSYTX67P9bk0TC5Epo4M.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNjYmZkZHVjcGdueGp6ZG1ubm12Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDExOTU3NDcsImV4cCI6MjA1Njc3MTc0N30.YMjicsUm6LePBeaOnHCQqN4xSYTX67P9bk0TC5Epo4M";
 
-            document.getElementById('cadastroForm').addEventListener('submit', async function(event) {
-                event.preventDefault();
-                
-                const nome = document.getElementById('nome').value;
-                const email = document.getElementById('email').value;
-                const senha = document.getElementById('senha').value;
-                const mensagem = document.getElementById('mensagem');
-                
-                // Supabase sign-up
-                const { error } = await supabase.auth.signUp({ email: email, password: senha });
-                
-                if (error) {
-                    mensagem.textContent = 'Erro no cadastro: ' + error.message;
-                    mensagem.style.color = 'red';
-                } else {
-                    mensagem.textContent = 'Cadastro realizado com sucesso! Verifique seu email para ativar sua conta.';
-                }
-            });
+        const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+        document.getElementById('cadastroForm').addEventListener('submit', async function(event) {
+            event.preventDefault();
+
+            const nome = document.getElementById('nome').value;
+            const email = document.getElementById('email').value;
+            const senha = document.getElementById('senha').value;
+            const mensagem = document.getElementById('mensagem');
+
+            mensagem.textContent = "Processando...";
+            mensagem.style.color = "yellow";
+
+            // Inserindo os dados na tabela "usuarios"
+            const { data, error } = await supabase.from("usuarios").insert([{ nome, email, senha }]);
+
+            if (error) {
+                mensagem.textContent = "Erro no cadastro: " + error.message;
+                mensagem.style.color = "red";
+            } else {
+                mensagem.textContent = "Cadastro realizado com sucesso!";
+                mensagem.style.color = "green";
+                console.log("Usuário cadastrado:", data);
+
+                // Redirecionar para a página de login após alguns segundos
+                setTimeout(() => {
+                    window.location.href = "login.html";
+                }, 2000);
+            }
         });
     </script>
+
 </body>
 </html>

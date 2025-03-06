@@ -3,45 +3,71 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lançamentos</title>
+    <title>Demandas Suporte N2</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <div id="app">
         <!-- Cabeçalho principal -->
         <header id="main-header">
-            <h1>Lançamentos N2</h1>
+            <h1>Demandas Suporte N2</h1>
         </header>
 
-        <!-- Conteúdo principal -->
+        <!-- Conteúdo em duas colunas -->
         <div id="content">
-            <!-- Seção de lançamentos -->
+            <!-- Coluna da esquerda: Lançamentos -->
             <section id="launches">
-                <h2>Atividades</h2>
-                <button id="launchButton" onclick="lancarAtividade()">
-                    <img src="https://img.icons8.com/color/48/000000/baby-yoda.png" alt="Yoda" class="icon"/>
-                    Lançar Atividade
-                </button>
-                <div id="launchList">
-                    <!-- Lista de lançamentos será preenchida dinamicamente -->
+                <h2>Lançamentos</h2>
+                <div class="launch">
+                    <h3>Título da Atividade</h3>
+                    <p>Descrição breve do que precisa ser feito.</p>
+                    <span class="status pending">Pendente</span>
+                </div>
+                <div class="launch">
+                    <h3>Título da Atividade</h3>
+                    <p>Descrição breve do que foi feito.</p>
+                    <span class="status done">Concluído</span>
                 </div>
             </section>
 
-            <!-- Calendário -->
+            <!-- Coluna da direita: Calendário -->
             <section id="calendar-container">
-                <div id="calendar-header">
-                    <button id="prevMonth" onclick="changeMonth(-1)">←</button>
-                    <h2 id="currentMonth"></h2>
-                    <button id="nextMonth" onclick="changeMonth(1)">→</button>
-                </div>
+                <h2 id="currentMonth">Março 2025</h2>
                 <div id="calendar">
-                    <!-- Os dias do calendário serão renderizados aqui -->
+                    <div class="day">1</div>
+                    <div class="day">2</div>
+                    <div class="day">3</div>
+                    <div class="day">4</div>
+                    <div class="day">5</div>
+                    <div class="day">6</div>
+                    <div class="day">7</div>
+                    <div class="day">8</div>
+                    <div class="day">9</div>
+                    <div class="day">10</div>
+                    <div class="day">11</div>
+                    <div class="day">12</div>
+                    <div class="day">13</div>
+                    <div class="day">14</div>
+                    <div class="day">15</div>
+                    <div class="day">16</div>
+                    <div class="day">17</div>
+                    <div class="day">18</div>
+                    <div class="day">19</div>
+                    <div class="day">20</div>
+                    <div class="day">21</div>
+                    <div class="day">22</div>
+                    <div class="day">23</div>
+                    <div class="day">24</div>
+                    <div class="day">25</div>
+                    <div class="day">26</div>
+                    <div class="day">27</div>
+                    <div class="day">28</div>
+                    <div class="day">29</div>
+                    <div class="day">30</div>
+                    <div class="day">31</div>
                 </div>
             </section>
         </div>
     </div>
-
-    <!-- Incluindo o JS -->
-    <script src="script.js"></script>
 </body>
 </html>
