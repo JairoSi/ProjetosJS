@@ -306,3 +306,78 @@ body {
   font-size: 0.9rem;
   margin-top: 10px;
 }
+
+.modal-overlay {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal-form {
+  background: #ffffff;
+  padding: 25px;
+  border-radius: 10px;
+  width: 95%;
+  max-width: 600px;
+  max-height: 90vh;
+  overflow-y: auto;
+  color: #333;
+  box-shadow: 0 0 25px rgba(0,0,0,0.3);
+}
+
+/* ============================
+   Layout Responsivo para dispositivos móveis
+============================ */
+@media (max-width: 768px) {
+  #content {
+    flex-direction: column;
+  }
+
+  #main-header {
+    padding: 15px;
+    text-align: center;
+  }
+
+  #main-header h1 {
+    font-size: 1.5rem;
+  }
+
+  #launches,
+  #calendar-container {
+    width: 100%;
+    flex: unset;
+    margin-bottom: 20px;
+    padding: 15px;
+  }
+
+  .day {
+    height: 70px;
+    font-size: 1rem;
+  }
+
+  .form-box {
+    width: 95%;
+    max-height: 95vh;
+  }
+
+  .form-actions {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .form-actions button {
+    width: 100%;
+  }
+
+  #toggleTodos,
+  #logoutButton {
+    font-size: 14px;
+    padding: 6px 12px;
+  }
+}

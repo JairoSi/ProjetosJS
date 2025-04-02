@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -43,103 +42,86 @@
     #yodaIcon:active {
       transform: scale(0.95);
     }
-    #form-atividade {
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(0, 0, 0, 0.7);
       display: none;
-      margin: 20px;
-      font-size: 12px;
+      justify-content: center;
+      align-items: center;
+      z-index: 999;
+    }
+    .modal-form {
+      background: #fff;
+      padding: 30px;
+      border-radius: 10px;
+      width: 90%;
+      max-width: 600px;
+      color: #333;
+      position: relative;
+    }
+    .modal-form h2 {
+      margin-top: 0;
+      color: #4caf50;
+      text-align: center;
+    }
+    .modal-form label {
+      display: block;
+      margin-top: 15px;
+      font-weight: bold;
+    }
+    .modal-form input,
+    .modal-form select,
+    .modal-form textarea {
+      width: 100%;
+      padding: 10px;
+      margin-top: 5px;
+      background: #f1f1f1;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+    .form-actions {
+      margin-top: 20px;
+      display: flex;
+      justify-content: space-between;
+    }
+    .form-actions button {
+      padding: 10px 20px;
+      border: none;
+      border-radius: 5px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    .form-actions button:first-child {
+      background: #4caf50;
+      color: #fff;
+    }
+    .form-actions button.cancel {
+      background: #e74c3c;
+      color: white;
     }
   </style>
 </head>
 <body>
 
-  <!-- Ícone do Yoda no canto inferior esquerdo -->
-  <img
-    id="yodaIcon"
-    src="yoda.png"
-    alt="Abrir Lançamento"
-    onclick="toggleFormulario()"
-  />
+  <img id="yodaIcon" src="yoda.png" alt="Abrir Lançamento" onclick="toggleFormulario()" />
 
   <div id="app">
     <header id="main-header">
       <h1>opsync</h1>
-      <div style="display: flex; gap: 10px;">
-        <button id="toggleTodos" style="
-          padding: 6px 10px;
-          font-size: 12px;
-          background-color: #3498db;
-          color: white;
-          border: none;
-          border-radius: 5px;
-          cursor: pointer;
-        ">👁️ Ver todos</button>
-    
-        <button id="logoutButton" style="
-          padding: 6px 10px;
-          font-size: 12px;
-          background:#e74c3c;
-          color:white;
-          border:none;
-          border-radius:5px;
-          cursor:pointer;
-        ">Sair</button>
+      <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: -35px;">
+        <button id="toggleTodos" style="padding: 6px 12px; font-size: 12px; background-color: #555; color: white; border: none; border-radius: 5px; cursor: pointer;">👀 Ver todos</button>
+        <button id="logoutButton" style="padding: 6px 12px; background:#e74c3c; color:white; border:none; border-radius:5px; cursor:pointer;">Sair</button>
       </div>
     </header>
-    
+
     <div id="content">
-
-      <!-- Formulário oculto de atividade -->
-      <section id="form-atividade" class="modal-form">
-        <div class="form-box">
-          <h2>Criar Nova Atividade</h2>
-      
-          <label for="dataAtividade">Data de Início</label>
-          <input type="date" id="dataAtividade" required />
-      
-          <label for="dataFimAtividade">Previsão de Término</label>
-          <input type="date" id="dataFimAtividade" required />
-      
-          <label for="plataforma">Plataforma</label>
-          <input type="text" id="plataforma" placeholder="Ex: Helpy, Certeiro..." required />
-      
-          <label for="responsavel">Responsável</label>
-          <input type="text" id="responsavel" placeholder="Quem vai executar?" required />
-      
-          <label for="descricao">Descrição</label>
-          <textarea id="descricao" placeholder="Explique a tarefa" rows="3"></textarea>
-      
-          <label for="status">Status</label>
-          <select id="status" required>
-            <option value="pendente">Pendente</option>
-            <option value="em_andamento">Em andamento</option>
-            <option value="concluido">Concluído</option>
-          </select>
-      
-          <label for="formaLancamento">Forma de Lançamento</label>
-          <select id="formaLancamento" required>
-            <option value="manual">Manual</option>
-            <option value="sistema">Sistema</option>
-            <option value="verificacao">Verificação</option>
-            <option value="automatico">Automático</option>
-          </select>
-      
-          <label for="observacoes">Observações</label>
-          <textarea id="observacoes" rows="2"></textarea>
-      
-          <div class="form-actions">
-            <button id="btnConfirmar">Confirmar</button>
-            <button onclick="toggleFormulario()" class="cancel">Cancelar</button>
-          </div>
-        </div>
+      <section id="launches">
+        <h2>Lançamentos</h2>
       </section>
-
-
-
-<!-- Agora só um bloco de lançamentos -->
-<section id="launches">
-  <h2>Lançamentos</h2>
-</section>
-
 
       <section id="calendar-container">
         <h2 id="currentMonth">Carregando...</h2>
@@ -148,10 +130,44 @@
     </div>
   </div>
 
+  <div class="modal-overlay" id="form-atividade">
+    <div class="modal-form">
+      <h2>Criar Nova Atividade</h2>
+      <label for="dataAtividade">Data de Início</label>
+      <input type="date" id="dataAtividade" required />
+      <label for="dataFimAtividade">Previsão de Término</label>
+      <input type="date" id="dataFimAtividade" required />
+      <label for="plataforma">Plataforma</label>
+      <input type="text" id="plataforma" placeholder="Ex: Helpy, Certeiro..." required />
+      <label for="responsavel">Responsável</label>
+      <input type="text" id="responsavel" placeholder="Quem vai executar?" required />
+      <label for="descricao">Descrição</label>
+      <textarea id="descricao" placeholder="Explique a tarefa" rows="3"></textarea>
+      <label for="status">Status</label>
+      <select id="status" required>
+        <option value="pendente">Pendente</option>
+        <option value="em_andamento">Em andamento</option>
+        <option value="concluido">Concluído</option>
+      </select>
+      <label for="formaLancamento">Forma de Lançamento</label>
+      <select id="formaLancamento" required>
+        <option value="manual">Manual</option>
+        <option value="sistema">Sistema</option>
+        <option value="verificacao">Verificação</option>
+        <option value="automatico">Automático</option>
+      </select>
+      <label for="observacoes">Observações</label>
+      <textarea id="observacoes" rows="2"></textarea>
+      <div class="form-actions">
+        <button id="btnConfirmar">Confirmar</button>
+        <button onclick="toggleFormulario()" class="cancel">Cancelar</button>
+      </div>
+    </div>
+  </div>
+
   <script type="module">
     import { auth } from './firebase-config.js';
     import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
-  
     onAuthStateChanged(auth, (user) => {
       if (!user) {
         window.location.href = "login.html";
@@ -164,9 +180,7 @@
   <script type="module">
     import { auth } from './firebase-config.js';
     import { signOut } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
-
     const logoutButton = document.getElementById("logoutButton");
-
     if (logoutButton) {
       logoutButton.addEventListener("click", async () => {
         try {
