@@ -1,10 +1,10 @@
+
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>OpSync</title>
-  
   <link rel="stylesheet" href="style.css" />
   <style>
     #calendar {
@@ -51,20 +51,39 @@
   </style>
 </head>
 <body>
+
   <!-- Ícone do Yoda no canto inferior esquerdo -->
   <img
-  id="yodaIcon"
-  src="yoda.png"
-  alt="Abrir Lançamento"
-  onclick="toggleFormulario()"
-/>
-
-
+    id="yodaIcon"
+    src="yoda.png"
+    alt="Abrir Lançamento"
+    onclick="toggleFormulario()"
+  />
 
   <div id="app">
     <header id="main-header">
       <h1>opsync</h1>
-      <button id="logoutButton" style="float:right; margin-top: 10px; padding: 8px 16px; background:#e74c3c; color:white; border:none; border-radius:5px; cursor:pointer;">Sair</button>
+      <div style="display: flex; gap: 10px;">
+        <button id="toggleTodos" style="
+          padding: 6px 10px;
+          font-size: 12px;
+          background-color: #3498db;
+          color: white;
+          border: none;
+          border-radius: 5px;
+          cursor: pointer;
+        ">👁️ Ver todos</button>
+    
+        <button id="logoutButton" style="
+          padding: 6px 10px;
+          font-size: 12px;
+          background:#e74c3c;
+          color:white;
+          border:none;
+          border-radius:5px;
+          cursor:pointer;
+        ">Sair</button>
+      </div>
     </header>
     
     <div id="content">
@@ -109,30 +128,21 @@
       
           <div class="form-actions">
             <button id="btnConfirmar">Confirmar</button>
-
             <button onclick="toggleFormulario()" class="cancel">Cancelar</button>
           </div>
         </div>
       </section>
-      
-      
 
-      <section id="launches">
-        <h2>Lançamentos</h2>
-        <div class="launch">
-          <h3>Título da Atividade</h3>
-          <p>Descrição breve do que precisa ser feito.</p>
-          <span class="status pending">Pendente</span>
-        </div>
-        <div class="launch">
-          <h3>Título da Atividade</h3>
-          <p>Descrição breve do que foi feito.</p>
-          <span class="status done">Concluído</span>
-        </div>
-      </section>
+
+
+<!-- Agora só um bloco de lançamentos -->
+<section id="launches">
+  <h2>Lançamentos</h2>
+</section>
+
 
       <section id="calendar-container">
-        <h2 id="currentMonth">Março 2025</h2>
+        <h2 id="currentMonth">Carregando...</h2>
         <div id="calendar"></div>
       </section>
     </div>
@@ -144,68 +154,30 @@
   
     onAuthStateChanged(auth, (user) => {
       if (!user) {
-        // Redireciona se não estiver logado
         window.location.href = "login.html";
-
       }
     });
   </script>
-  
-  
 
-  <!-- Script principal -->
-<script type="module" src="script.js"></script>
-  <script>
-    function generateCalendar() {
-      const calendarElement = document.getElementById("calendar");
-      const today = new Date();
-      const currentDay = today.getDate();
-      const currentMonth = today.getMonth();
-      const currentYear = today.getFullYear();
+  <script type="module" src="script.js"></script>
 
-      const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
+  <script type="module">
+    import { auth } from './firebase-config.js';
+    import { signOut } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
 
-      for (let i = 1; i <= daysInMonth; i++) {
-        let dayElement = document.createElement("div");
-        dayElement.classList.add("day");
-        dayElement.textContent = i;
+    const logoutButton = document.getElementById("logoutButton");
 
-        if (i < currentDay) {
-          dayElement.classList.add("past");
-        } else if (i === currentDay) {
-          dayElement.classList.add("today");
+    if (logoutButton) {
+      logoutButton.addEventListener("click", async () => {
+        try {
+          await signOut(auth);
+          window.location.href = "login.html";
+        } catch (error) {
+          console.error("Erro ao sair:", error);
+          alert("Erro ao sair: " + error.message);
         }
-
-        calendarElement.appendChild(dayElement);
-      }
-    }
-    generateCalendar();
-
-    function toggleFormulario() {
-      const form = document.getElementById("form-atividade");
-      form.style.display = form.style.display === "none" ? "block" : "none";
+      });
     }
   </script>
-
-<script type="module">
-  import { auth } from './firebase-config.js';
-  import { signOut } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
-
-  const logoutButton = document.getElementById("logoutButton");
-
-  if (logoutButton) {
-    logoutButton.addEventListener("click", async () => {
-      try {
-        await signOut(auth);
-        window.location.href = "login.html";
-      } catch (error) {
-        console.error("Erro ao sair:", error);
-        alert("Erro ao sair: " + error.message);
-      }
-    });
-  }
-</script>
-
-
 </body>
 </html>

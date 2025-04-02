@@ -1,10 +1,7 @@
 // firebase-config.js
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
-import { getFirestore } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
 import { getAuth } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
-
-
-
+import { getDatabase } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyDfZgVIAb6AFnnUrSB_RaI5Yk4Ni07ohFM",
@@ -17,8 +14,7 @@ const firebaseConfig = {
 };
 
 const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
+const db = getDatabase(app); // <- AGORA SIM, usando o Realtime Database
 const auth = getAuth(app);
 
 export { app, db, auth };
-

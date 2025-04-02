@@ -45,6 +45,7 @@ function lancarAtividade() {
   const status = document.getElementById("status").value;
   const observacoes = document.getElementById("observacoes").value;
   const forma_lancamento = document.getElementById("formaLancamento").value;
+  const dataFim = document.getElementById("dataFimAtividade").value;
 
   onAuthStateChanged(auth, (user) => {
     if (user) {
@@ -80,6 +81,28 @@ async function carregarLancamentos(uid, mostrarTodos = false) {
   }
 }
 
+function renderizarLancamentos(lancamentos) {
+  const container = document.getElementById("launches");
+  container.innerHTML = "<h2>Lançamentos</h2>"; // Limpa e reinicia com o título
+
+  if (lancamentos.length === 0) {
+    container.innerHTML += "<p>Nenhum lançamento encontrado para este mês.</p>";
+    return;
+  }
+
+  lancamentos.forEach((lancamento) => {
+    const div = document.createElement("div");
+    div.className = "launch";
+    div.innerHTML = `
+      <h3>${lancamento.plataforma} - ${lancamento.responsavel}</h3>
+      <p>${lancamento.descricao}</p>
+      <span class="status ${lancamento.status}">${lancamento.status}</span>
+    `;
+    container.appendChild(div);
+  });
+}
+
+
 async function updateCalendar(uid, mostrarTodos = false) {
   const monthNames = [
     "Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho",
@@ -106,6 +129,8 @@ async function updateCalendar(uid, mostrarTodos = false) {
     if (diasComAtividade.includes(day)) dayElement.classList.add("active-day");
 
     calendarElement.appendChild(dayElement);
+    // NOVO: Renderiza também os lançamentos
+renderizarLancamentos(lancamentos);
   }
 }
 
