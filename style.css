@@ -298,3 +298,11 @@ body {
 .status-dia-concluido {
   background-color: #2ecc71 !important;
 }
+.historico-container {
+  background-color: #f4f4f4;
+  padding: 10px;
+  border-left: 3px solid #8e44ad;
+  border-radius: 5px;
+  font-size: 0.9rem;
+  margin-top: 10px;
+}

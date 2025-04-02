@@ -82,6 +82,13 @@ function lancarAtividade() {
         const refAtualizacao = ref(db, "ops_activities/" + idEdicao);
         await set(refAtualizacao, atualizacao);
 
+        await push(ref(db, "ops_activities_history/" + idEdicao), {
+          data: new Date().toISOString(),
+          acao: "edição",
+          realizado_por: auth.currentUser.displayName || auth.currentUser.email
+        });
+        
+
         alert("Lançamento atualizado com sucesso!");
         editando = false;
         idEdicao = null;
@@ -206,6 +213,19 @@ function renderizarLancamentos(lancamentos) {
   ">
     Editar
   </button>
+  <button onclick="verHistorico('${lancamento.id}')" style="
+  margin-top: 8px;
+  padding: 5px 10px;
+  background-color: #8e44ad;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-left: 5px;
+">
+  📜 Ver histórico
+</button>
+<div id="historico-${lancamento.id}" class="historico-container" style="display: none; margin-top: 10px;"></div>
   `;
     container.appendChild(div);
   });
@@ -291,7 +311,29 @@ document.getElementById("btnConfirmar")?.addEventListener("click", () => {
 async function excluirLancamento(id) {
   if (confirm("Tem certeza que deseja excluir este lançamento?")) {
     try {
+      const snapshot = await get(child(ref(db), "ops_activities/" + id));
+      if (!snapshot.exists()) return alert("Lançamento não encontrado.");
+
+      const dados = snapshot.val();
+      const usuario = auth.currentUser.displayName || auth.currentUser.email;
+      const timestamp = new Date().toISOString();
+
+      // Adiciona log no histórico antes de excluir
+      await push(ref(db, `ops_activities_history/${id}`), {
+        tipo: "Exclusão",
+        usuario,
+        timestamp
+      });
+
       await remove(ref(db, "ops_activities/" + id));
+
+      await push(ref(db, "ops_activities_history/" + id), {
+        data: new Date().toISOString(),
+        acao: "exclusão",
+        realizado_por: auth.currentUser.displayName || auth.currentUser.email
+      });
+      
+
       alert("Lançamento excluído com sucesso.");
       location.reload(); // Recarrega para atualizar a lista
     } catch (e) {
@@ -300,6 +342,36 @@ async function excluirLancamento(id) {
     }
   }
 }
+
+
+async function verHistorico(id) {
+  const historicoRef = child(ref(db), `ops_activities_history/${id}`);
+  const snapshot = await get(historicoRef);
+
+  const container = document.getElementById(`historico-${id}`);
+  if (!snapshot.exists()) {
+    container.innerHTML = "<em>Sem histórico encontrado.</em>";
+  } else {
+    const logs = snapshot.val();
+    let html = "<ul>";
+    Object.values(logs).forEach(log => {
+      const acao = log.acao || log.tipo || "ação";
+      const quem = log.realizado_por || log.usuario || "Desconhecido";
+      const quando = log.data || log.timestamp || null;
+      const dataFormatada = quando ? new Date(quando).toLocaleString() : "Data desconhecida";
+
+      html += `<li><strong>${acao}</strong> por <em>${quem}</em><br/><small>${dataFormatada}</small></li>`;
+    });
+    html += "</ul>";
+    container.innerHTML = html;
+  }
+
+  container.style.display = container.style.display === "none" ? "block" : "none";
+}
+
+
+window.verHistorico = verHistorico;
+
 window.excluirLancamento = excluirLancamento;
 
 window.lancarAtividade = lancarAtividade;
