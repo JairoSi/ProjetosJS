@@ -1,6 +1,6 @@
 
 // Firebase Realtime Database e Auth
-import { getDatabase, ref, push, get, child, onValue, remove,set } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
+import { getDatabase, ref, push, get, child, onValue, remove,set,update } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
 import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
 import { app } from './firebase-config.js';
 
@@ -18,10 +18,64 @@ const calendarElement = document.getElementById("calendar");
 let currentYear = new Date().getFullYear();
 let currentMonth = new Date().getMonth();
 
+// 🔹 Etapa 1: Estrutura inicial para checklist no Firebase
+// Modelo de checklist:
+// ops_checklists: {
+//   -Kdh28dhw72hds: {
+//     id_plataforma: "Xama",
+//     titulo: "Checklist semanal Xama",
+//     itens: [
+//       { descricao: "Verificar login", feito: false },
+//       { descricao: "Validar relatórios", feito: false }
+//     ],
+//     criado_por: "jairo@logame.com.br",
+//     criado_em: "2025-04-03T13:25:00Z"
+//   },
+//   ...
+// }
+
+// Exemplo de função para salvar checklist (interface e uso real virão na Etapa 2)
+async function salvarChecklist(titulo, plataforma, itens) {
+  const user = auth.currentUser;
+  if (!user) return alert("Usuário não autenticado");
+
+  const checklist = {
+    id_plataforma: plataforma,
+    titulo,
+    itens,
+    criado_por: user.displayName || user.email,
+    criado_em: new Date().toISOString()
+  };
+
+  try {
+    await push(ref(db, "ops_checklists"), checklist);
+    console.log("✅ Checklist salvo com sucesso!");
+  } catch (error) {
+    console.error("Erro ao salvar checklist:", error);
+  }
+}
+
+async function gerarIdSequencial() {
+  const contadorRef = ref(db, "sequencial_lancamento");
+  const snapshot = await get(contadorRef);
+  let novoNumero = 1;
+
+  if (snapshot.exists()) {
+    novoNumero = snapshot.val() + 1;
+  }
+
+  await set(contadorRef, novoNumero);
+  return novoNumero;
+}
+
+
 async function adicionarAtividade(data, plataforma, responsavel, descricao, status, observacoes, forma_lancamento, uid) {
   try {
+    const idSequencial = await gerarIdSequencial();
     await push(ref(db, "ops_activities"), {
-      data:data,
+      id_sequencial: idSequencial,
+      data,
+      //data:data,
       plataforma,
       responsavel,
       descricao,
@@ -45,11 +99,69 @@ function toggleFormulario() {
   form.style.display = form.style.display === "none" ? "block" : "none";
 }
 
+function carregarPlataformasExistentes() {
+  const select = document.getElementById("plataforma");
+  select.innerHTML = `<option value="">Selecione a plataforma</option>`; // Limpa
+
+  const atividadesRef = ref(db, "ops_activities");
+
+  onValue(atividadesRef, (snapshot) => {
+    const plataformas = new Set();
+    snapshot.forEach((childSnapshot) => {
+      const data = childSnapshot.val();
+      if (data.plataforma) {
+        plataformas.add(data.plataforma.trim());
+      }
+    });
+
+    // Adiciona cada plataforma como option
+    plataformas.forEach((nome) => {
+      const option = document.createElement("option");
+      option.value = nome;
+      option.textContent = nome;
+      select.appendChild(option);
+    });
+
+    // Adiciona opção de nova plataforma
+    const outra = document.createElement("option");
+    outra.value = "__nova__";
+    outra.textContent = "Outra / Nova Plataforma...";
+    select.appendChild(outra);
+  });
+}
+async function registrarPlataformaSeNova(nomePlataforma, user) {
+  const plataformasRef = ref(db, "ops_plataformas");
+  const snapshot = await get(plataformasRef);
+
+  const plataformas = snapshot.exists() ? Object.values(snapshot.val()) : [];
+
+  const jaExiste = plataformas.includes(nomePlataforma.trim());
+
+  if (!jaExiste) {
+    await push(plataformasRef, nomePlataforma.trim());
+
+    // salvar no histórico
+    await push(ref(db, "ops_plataformas_historico"), {
+      nome: nomePlataforma.trim(),
+      criado_por: user.displayName || user.email,
+      criado_em: new Date().toISOString()
+    });
+
+    console.log("✅ Plataforma registrada:", nomePlataforma);
+  }
+}
+
+
+
 function lancarAtividade() {
   const dataInput = document.getElementById("dataAtividade").value;
   const [year, month, day] = dataInput.split("-");
   const data = `${year}-${month.padStart(2, "0")}-${day.padStart(2, "0")}`;
-  const plataforma = document.getElementById("plataforma").value;
+  let plataformaSelecionada = document.getElementById("plataforma").value;
+if (plataformaSelecionada === "__nova__") {
+  plataformaSelecionada = document.getElementById("novaPlataforma").value.trim();
+}
+
   const responsavel = document.getElementById("responsavel").value;
   const descricao = document.getElementById("descricao").value;
   const status = document.getElementById("status").value;
@@ -68,7 +180,7 @@ function lancarAtividade() {
         const atualizacao = {
           ...dadosAnteriores, // mantém tudo o que já existia
           data,
-          plataforma,
+          plataforma: plataformaSelecionada,
           responsavel,
           descricao,
           status,
@@ -97,7 +209,9 @@ function lancarAtividade() {
         toggleFormulario();
       } else {
         // Criar novo
-        adicionarAtividade(data, plataforma, responsavel, descricao, status, observacoes, forma_lancamento, user.uid);
+        await registrarPlataformaSeNova(plataformaSelecionada, user);
+        adicionarAtividade(data, plataformaSelecionada, responsavel, descricao, status, observacoes, forma_lancamento, user.uid);
+
       }
     } else {
       alert("Usuário não autenticado!");
@@ -182,7 +296,7 @@ function renderizarLancamentos(lancamentos) {
     const div = document.createElement("div");
     div.className = "launch";
     div.innerHTML = `
-    <h3>${lancamento.plataforma} - ${lancamento.responsavel}</h3>
+    <h3>#${lancamento.id_sequencial || '—'} - ${lancamento.plataforma} - ${lancamento.responsavel}</h3>
     <p>${lancamento.descricao}</p>
     <p><strong>Observações:</strong> ${lancamento.observacoes || "—"}</p>
     <small><strong>Criado por:</strong> ${lancamento.criado_por || "Desconhecido"}</small><br>
@@ -288,6 +402,7 @@ function changeMonth(direction, uid, mostrarTodos = false) {
 onAuthStateChanged(auth, (user) => {
   if (user) {
     updateCalendar(user.uid);
+    carregarPlataformasExistentes();
 
     const mostrarTodosBtn = document.getElementById("toggleTodos");
     if (mostrarTodosBtn) {
@@ -369,11 +484,40 @@ async function verHistorico(id) {
   container.style.display = container.style.display === "none" ? "block" : "none";
 }
 
+function verificarOutraPlataforma() {
+  const select = document.getElementById("plataforma");
+  const novaContainer = document.getElementById("novaPlataformaContainer");
+
+  if (select.value === "__nova__") {
+    novaContainer.style.display = "block";
+  } else {
+    novaContainer.style.display = "none";
+  }
+}
+
+
+
+
+  const plataformasRef = ref(db, "ops_plataformas");
+  onValue(plataformasRef, (snapshot) => {
+    if (snapshot.exists()) {
+      Object.values(snapshot.val()).forEach((nome) => {
+        const option = document.createElement("option");
+        option.value = nome;
+        option.textContent = nome;
+        select.appendChild(option);
+      });
+    }
+  });
+
+
+
+
+
+window.verificarOutraPlataforma = verificarOutraPlataforma;
 
 window.verHistorico = verHistorico;
-
 window.excluirLancamento = excluirLancamento;
-
 window.lancarAtividade = lancarAtividade;
 window.toggleFormulario = toggleFormulario;
 window.editarLancamento = editarLancamento;

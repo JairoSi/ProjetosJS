@@ -103,6 +103,9 @@
       background: #e74c3c;
       color: white;
     }
+    .checklist-item {
+      margin-bottom: 8px;
+    }
   </style>
 </head>
 <body>
@@ -121,6 +124,7 @@
     <div id="content">
       <section id="launches">
         <h2>Lançamentos</h2>
+        <button onclick="abrirChecklistModal()" style="margin-top: 10px; padding: 10px; background: green; color: white; border-radius: 5px;">✅ Criar Checklist</button>
       </section>
 
       <section id="calendar-container">
@@ -138,7 +142,21 @@
       <label for="dataFimAtividade">Previsão de Término</label>
       <input type="date" id="dataFimAtividade" required />
       <label for="plataforma">Plataforma</label>
-      <input type="text" id="plataforma" placeholder="Ex: Helpy, Certeiro..." required />
+      <select id="plataforma" required onchange="verificarOutraPlataforma()">
+        <option value="">Selecione a plataforma</option>
+      </select>
+      
+      <!-- Campo extra que só aparece se a pessoa quiser nova plataforma -->
+      <div id="novaPlataformaContainer" style="display: none; margin-top: 10px;">
+        <label for="novaPlataforma">Informe o nome da nova plataforma:</label>
+        <input type="text" id="novaPlataforma" placeholder="Digite o nome da nova plataforma" />
+      </div>
+      
+      
+ 
+      
+   
+     
       <label for="responsavel">Responsável</label>
       <input type="text" id="responsavel" placeholder="Quem vai executar?" required />
       <label for="descricao">Descrição</label>
@@ -164,6 +182,8 @@
       </div>
     </div>
   </div>
+
+
 
   <script type="module">
     import { auth } from './firebase-config.js';
@@ -193,5 +213,9 @@
       });
     }
   </script>
+
+
+
+
 </body>
 </html>

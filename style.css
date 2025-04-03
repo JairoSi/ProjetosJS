@@ -381,3 +381,30 @@ body {
     padding: 6px 12px;
   }
 }
+
+.modal-overlay {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.6);
+  display: none;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+}
+.modal-form {
+  background: #fff;
+  padding: 30px;
+  border-radius: 10px;
+  width: 90%;
+  max-width: 500px;
+}
+.checklist-item {
+  margin-top: 5px;
+  width: 100%;
+  padding: 10px;
+  background: #f3f3f3;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
