@@ -127,22 +127,8 @@
         <button onclick="abrirChecklistModal()" style="margin-top: 10px; padding: 10px; background: green; color: white; border-radius: 5px;">✅ Criar Checklist</button>
       </section>
 
-
-      
       <section id="calendar-container">
         <h2 id="currentMonth">Carregando...</h2>
-        
-        <div id="calendar-days" style="display: grid; grid-template-columns: repeat(7, 1fr); font-weight: bold; text-align: center; margin-bottom: 10px;">
-          <div>Dom</div>
-          <div>Seg</div>
-          <div>Ter</div>
-          <div>Qua</div>
-          <div>Qui</div>
-          <div>Sex</div>
-          <div>Sáb</div>
-        </div>
-        
-
         <div id="calendar"></div>
       </section>
     </div>
@@ -168,11 +154,32 @@
       
       
  
-      
+
    
      
       <label for="responsavel">Responsável</label>
       <input type="text" id="responsavel" placeholder="Quem vai executar?" required />
+
+      <!-- 🔧 INÍCIO - Campo para selecionar checklist -->
+      <label for="seletorChecklist">Checklist pré-cadastrado</label>
+      <select id="seletorChecklist">
+      <option value="">Selecione um checklist</option>
+      </select>
+      <!-- 🔧 FIM - Campo para selecionar checklist -->
+
+<!-- 🔧 INÍCIO CHECKLIST INTERATIVO -->
+<div id="checklistContainer" style="margin-bottom: 10px;">
+  <label for="selectChecklist">Selecione um checklist vinculado à plataforma:</label>
+  <select id="selectChecklist" onchange="mostrarChecklistSelecionado()">
+    <option value="">-- Nenhum checklist selecionado --</option>
+  </select>
+  <button onclick="adicionarNovoChecklist()" style="margin-top: 8px;">➕ Criar Novo Checklist</button>
+  <div id="checklistItensSelecionados" style="margin-top: 10px;"></div>
+</div>
+<!-- 🔧 FIM CHECKLIST INTERATIVO -->
+>
+
+
       <label for="descricao">Descrição</label>
       <textarea id="descricao" placeholder="Explique a tarefa" rows="3"></textarea>
       <label for="status">Status</label>

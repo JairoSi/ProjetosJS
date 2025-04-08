@@ -4,8 +4,10 @@ import { getDatabase, ref, push, get, child, onValue, remove,set,update } from "
 import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
 import { app } from './firebase-config.js';
 
+
 const db = getDatabase(app);
 const auth = getAuth(app);
+
 
 let editando = false;
 let idEdicao = null;
@@ -54,6 +56,8 @@ async function salvarChecklist(titulo, plataforma, itens) {
     console.error("Erro ao salvar checklist:", error);
   }
 }
+
+
 
 async function gerarIdSequencial() {
   const contadorRef = ref(db, "sequencial_lancamento");
@@ -355,8 +359,6 @@ async function updateCalendar(uid, mostrarTodos = false) {
   calendarElement.innerHTML = "";
 
   const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
-  const firstDay = new Date(currentYear, currentMonth, 1).getDay(); // 0 = domingo, 1 = segunda...
-
   const today = new Date();
   const isCurrentMonth = (currentMonth === today.getMonth() && currentYear === today.getFullYear());
 
@@ -365,20 +367,15 @@ async function updateCalendar(uid, mostrarTodos = false) {
 
   lancamentos.forEach(l => {
     if (!l.data || !l.status) return;
-
+  
     const [year, month, day] = l.data.split("-").map(Number);
     const dia = day;
-
+  
+    // Garante que cada dia recebe o último status cadastrado
     diasComStatus[dia] = l.status;
   });
-
-  // Adiciona dias vazios no início, se o mês não começa no domingo
-  for (let i = 0; i < firstDay; i++) {
-    const emptyDay = document.createElement("div");
-    emptyDay.className = "day";
-    emptyDay.style.visibility = "hidden"; // invisível mas ocupa espaço
-    calendarElement.appendChild(emptyDay);
-  }
+  
+  
 
   for (let day = 1; day <= daysInMonth; day++) {
     const dayElement = document.createElement("div");
@@ -391,13 +388,13 @@ async function updateCalendar(uid, mostrarTodos = false) {
       dayElement.classList.add("active-day");
       dayElement.classList.add(`status-dia-${diasComStatus[day]}`);
     }
+    
 
     calendarElement.appendChild(dayElement);
   }
 
-  renderizarLancamentos(lancamentos);
+  renderizarLancamentos(lancamentos); // Correto: fora do loop
 }
-
 
 function changeMonth(direction, uid, mostrarTodos = false) {
   currentMonth += direction;
@@ -512,10 +509,13 @@ function verificarOutraPlataforma() {
         const option = document.createElement("option");
         option.value = nome;
         option.textContent = nome;
+        const select = document.getElementById('seletorChecklist'); // exemplo
+
         select.appendChild(option);
       });
     }
   });
+
 
 
 
@@ -527,5 +527,170 @@ window.verHistorico = verHistorico;
 window.excluirLancamento = excluirLancamento;
 window.lancarAtividade = lancarAtividade;
 window.toggleFormulario = toggleFormulario;
+
+
+
+// 🔧 INÍCIO CORREÇÃO: Substituir 'database' por 'db' para evitar erro de referência
+function carregarChecklists() {
+  const checklistRef = ref(db, 'ops_checklists');
+  get(checklistRef).then((snapshot) => {
+    if (snapshot.exists()) {
+      const checklists = snapshot.val();
+      const select = document.getElementById("selectChecklist");
+      Object.entries(checklists).forEach(([id, data]) => {
+        const option = document.createElement("option");
+        option.value = JSON.stringify(data.itens); // Array de itens
+        option.textContent = data.titulo || `Checklist ${id}`;
+        select.appendChild(option);
+      });
+    }
+  }).catch((error) => {
+    console.error("Erro ao carregar checklists:", error);
+  });
+}
+// 🔧 FIM CORREÇÃO
+
+
+document.addEventListener('DOMContentLoaded', function () {
+  const selectChecklist = document.getElementById("selectChecklist");
+  const btnInserir = document.getElementById("btnInserirChecklist");
+  const descricaoInput = document.getElementById("descricao");
+
+  if (selectChecklist && btnInserir && descricaoInput) {
+    carregarChecklists();
+
+    btnInserir.addEventListener("click", () => {
+      const itens = selectChecklist.value;
+      if (itens) {
+        const checklistArray = JSON.parse(itens);
+        const checklistText = checklistArray.map((item, i) => `${i + 1}. [ ] ${item.descricao}`).join('\n');
+        descricaoInput.value = `${descricaoInput.value}\n\nChecklist:\n${checklistText}`.trim();
+      }
+    });
+    
+  }
+});
+// FIM carregar e inserir checklist
+
+// 🔧 INÍCIO CHECKLIST - EXIBIR ITENS
+function mostrarChecklistSelecionado() {
+  const select = document.getElementById("selectChecklist");
+  const checklistId = select.value;
+  const checklistContainer = document.getElementById("checklistItensSelecionados");
+
+  checklistContainer.innerHTML = "";
+
+  if (!checklistId) return;
+
+  const db = getDatabase();
+  get(ref(db, `ops_checklists/${checklistId}/itens`)).then(snapshot => {
+    if (snapshot.exists()) {
+      const itens = snapshot.val();
+      Object.keys(itens).forEach((id) => {
+        const item = itens[id];
+        const checkbox = document.createElement("input");
+        checkbox.type = "checkbox";
+        checkbox.id = `chk_${id}`;
+        checkbox.checked = !!item.concluido;
+        checkbox.onchange = () => salvarStatusChecklistItem(checklistId, id, checkbox.checked);
+
+        const label = document.createElement("label");
+        label.htmlFor = checkbox.id;
+        label.innerText = item.texto;
+        label.style.marginLeft = "8px";
+
+        const div = document.createElement("div");
+        div.classList.add("checklist-item");
+        div.appendChild(checkbox);
+        div.appendChild(label);
+
+        checklistContainer.appendChild(div);
+      });
+    } else {
+      checklistContainer.innerHTML = "Nenhum item encontrado.";
+    }
+  });
+}
+
+// ✅ INÍCIO: Função para adicionar novo checklist manualmente
+function adicionarNovoChecklist() {
+  const plataformaSelecionada = document.getElementById("plataforma").value;
+  if (!plataformaSelecionada) {
+    alert("Selecione uma plataforma antes de adicionar um checklist.");
+    return;
+  }
+
+  const novoTitulo = prompt("Digite o nome do novo checklist:");
+  if (!novoTitulo) return;
+
+  const itens = [];
+  let continuar = true;
+  while (continuar) {
+    const descricao = prompt("Digite a descrição do item ou deixe em branco para finalizar:");
+    if (!descricao) break;
+    itens.push({ descricao, feito: false });
+  }
+
+  const checklistRef = ref(db, 'ops_checklists');
+  push(checklistRef, {
+    id_plataforma: plataformaSelecionada,
+    titulo: novoTitulo,
+    itens: itens
+  }).then(() => {
+    alert("Checklist adicionado com sucesso!");
+    carregarChecklists(); // Atualiza lista
+  }).catch(error => {
+    console.error("Erro ao adicionar checklist:", error);
+  });
+}
+// ✅ FIM
+
+
+
+// 🔧 INÍCIO - Função para carregar e aplicar checklist na descrição
+const seletorChecklist = document.getElementById("seletorChecklist");
+
+const plataformaSelect = document.getElementById("plataforma");
+plataformaSelect.addEventListener("change", () => {
+  const plataformaSelecionada = plataformaSelect.value;
+  const seletorChecklist = document.getElementById("seletorChecklist");
+  seletorChecklist.innerHTML = `<option value="">Selecione um checklist</option>`;
+
+  get(child(ref(db), "ops_checklists")).then((snapshot) => {
+    if (snapshot.exists()) {
+      const checklists = snapshot.val();
+      Object.entries(checklists).forEach(([id, checklist]) => {
+        if (checklist.plataforma === plataformaSelecionada) {
+          const option = document.createElement("option");
+          option.value = id;
+          option.textContent = checklist.titulo;
+          seletorChecklist.appendChild(option);
+        }
+      });
+    }
+  });
+});
+
+
+
+seletorChecklist.addEventListener("change", async () => {
+  const idSelecionado = seletorChecklist.value;
+  if (!idSelecionado) return;
+
+  const snapshot = await get(child(ref(db), `ops_checklists/${idSelecionado}`));
+  if (!snapshot.exists()) return;
+
+  const checklist = snapshot.val();
+  const itensTexto = checklist.itens.map((item, idx) => `${idx + 1}. ${item.descricao}`).join("\n");
+
+  const campoDescricao = document.getElementById("descricao");
+  campoDescricao.value = `${campoDescricao.value}\n\nChecklist:\n${itensTexto}`.trim();
+});
+// 🔧 FIM - Função para carregar e aplicar checklist na descrição
+
+
+
 window.editarLancamento = editarLancamento;
+window.adicionarNovoChecklist = adicionarNovoChecklist;
+
 

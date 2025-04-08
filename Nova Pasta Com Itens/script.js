@@ -355,8 +355,6 @@ async function updateCalendar(uid, mostrarTodos = false) {
   calendarElement.innerHTML = "";
 
   const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
-  const firstDay = new Date(currentYear, currentMonth, 1).getDay(); // 0 = domingo, 1 = segunda...
-
   const today = new Date();
   const isCurrentMonth = (currentMonth === today.getMonth() && currentYear === today.getFullYear());
 
@@ -365,20 +363,15 @@ async function updateCalendar(uid, mostrarTodos = false) {
 
   lancamentos.forEach(l => {
     if (!l.data || !l.status) return;
-
+  
     const [year, month, day] = l.data.split("-").map(Number);
     const dia = day;
-
+  
+    // Garante que cada dia recebe o último status cadastrado
     diasComStatus[dia] = l.status;
   });
-
-  // Adiciona dias vazios no início, se o mês não começa no domingo
-  for (let i = 0; i < firstDay; i++) {
-    const emptyDay = document.createElement("div");
-    emptyDay.className = "day";
-    emptyDay.style.visibility = "hidden"; // invisível mas ocupa espaço
-    calendarElement.appendChild(emptyDay);
-  }
+  
+  
 
   for (let day = 1; day <= daysInMonth; day++) {
     const dayElement = document.createElement("div");
@@ -391,13 +384,13 @@ async function updateCalendar(uid, mostrarTodos = false) {
       dayElement.classList.add("active-day");
       dayElement.classList.add(`status-dia-${diasComStatus[day]}`);
     }
+    
 
     calendarElement.appendChild(dayElement);
   }
 
-  renderizarLancamentos(lancamentos);
+  renderizarLancamentos(lancamentos); // Correto: fora do loop
 }
-
 
 function changeMonth(direction, uid, mostrarTodos = false) {
   currentMonth += direction;
