@@ -156,11 +156,7 @@
       <label for="dataFimAtividade">Previsão de Término</label>
       <input type="date" id="dataFimAtividade" required />
       <label for="plataforma">Plataforma</label>
-     <!-- <select id="plataforma" required onchange="verificarOutraPlataforma()"> -->
-
-      <select id="plataforma" required onchange="verificarOutraPlataforma(); carregarChecklistsPorPlataforma(this.value)">
-
-
+      <select id="plataforma" required onchange="verificarOutraPlataforma()">
         <option value="">Selecione a plataforma</option>
       </select>
       
@@ -292,7 +288,12 @@
   </div>
 </div>
 
-
+<!-- MODAL DE CRIAÇÃO DE CHECKLIST -->
+<div class="modal-overlay" id="modalChecklist" style="display: none;">
+  <div class="modal-form">
+    <!-- Conteúdo do modal aqui... -->
+  </div>
+</div>
 
 
 

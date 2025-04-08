@@ -94,7 +94,10 @@ async function adicionarAtividade(data, plataforma, responsavel, descricao, stat
   }
 }
 
-
+function toggleFormulario() {
+  const form = document.getElementById("form-atividade");
+  form.style.display = form.style.display === "none" ? "block" : "none";
+}
 
 function carregarPlataformasExistentes() {
   const select = document.getElementById("plataforma");
@@ -197,28 +200,22 @@ if (formaDescricao === "livre") {
         const snapshot = await get(child(ref(db), "ops_activities/" + idEdicao));
         if (!snapshot.exists()) return alert("Erro: não foi possível recuperar o lançamento para edição.");
       
-        
-
-
         const dadosAnteriores = snapshot.val();
       
         const atualizacao = {
-          ...dadosAnteriores,
+          ...dadosAnteriores, // mantém tudo o que já existia
           data,
           plataforma: plataformaSelecionada,
           responsavel,
-          descricao: formaDescricao === "livre" ? descricao : "",
+          descricao,
           status,
           observacoes,
           forma_lancamento,
           userId: user.uid,
-          forma_descricao: formaDescricao,
-          checklist_usado: formaDescricao === "checklist" ? checklist_usado : "",
-          checklist_itens: formaDescricao === "checklist" ? checklist_itens : [],
           editado_em: new Date().toISOString(),
           editado_por: auth.currentUser.displayName || auth.currentUser.email
         };
-        
+
         const refAtualizacao = ref(db, "ops_activities/" + idEdicao);
         await set(refAtualizacao, atualizacao);
 
@@ -351,24 +348,7 @@ function renderizarLancamentos(lancamentos) {
     div.className = "launch";
     div.innerHTML = `
     <h3>#${lancamento.id_sequencial || '—'} - ${lancamento.plataforma} - ${lancamento.responsavel}</h3>
-
-  
-
-
-    ${lancamento.checklist_itens && lancamento.checklist_itens.length > 0
-      ? `<ul style="margin-left: 20px; padding-left: 0;">${lancamento.checklist_itens
-          .map((item, index) =>
-            `<li>
-              <input type="checkbox" disabled ${item.feito ? "checked" : ""} id="check-${lancamento.id}-${index}">
-              <label for="check-${lancamento.id}-${index}">${item.descricao}</label>
-            </li>`
-          ).join("")}</ul>`
-      : "<p>—</p>"
-    }
-    
-    
-
-
+    <p>${lancamento.descricao}</p>
     <p><strong>Observações:</strong> ${lancamento.observacoes || "—"}</p>
     <small><strong>Criado por:</strong> ${lancamento.criado_por || "Desconhecido"}</small><br>
     ${lancamento.editado_por ? `<small><strong>Editado por:</strong> ${lancamento.editado_por}</small><br>` : ""}
@@ -481,16 +461,6 @@ onAuthStateChanged(auth, (user) => {
   if (user) {
     updateCalendar(user.uid);
     carregarPlataformasExistentes();
-
-
-
-    // Garante que o checklist carregue ao abrir formulário já com plataforma
-const plataformaSelecionada = document.getElementById("plataforma")?.value;
-if (plataformaSelecionada) {
-  carregarChecklistsPorPlataforma(plataformaSelecionada);
-}
-
-
 
     const mostrarTodosBtn = document.getElementById("toggleTodos");
     if (mostrarTodosBtn) {
@@ -715,41 +685,8 @@ async function confirmarCriacaoChecklist() {
   carregarChecklistsPorPlataforma(plataforma); // atualiza o seletor de checklists
 }
 
-
-
-
-
 window.confirmarCriacaoChecklist = confirmarCriacaoChecklist;
 window.adicionarCampoChecklist = adicionarCampoChecklist;
-
-function fecharChecklistModal() {
-  document.getElementById("modalChecklist").style.display = "none";
-}
-
-
-
-function toggleFormulario() {
-  const form = document.getElementById("form-atividade");
-  if (!form) return;
-
-  const diaSelecionado = document.querySelector(".dia.selecionado");
-  const mes = document.getElementById("mes")?.dataset.mes;
-  const ano = document.getElementById("ano")?.textContent;
-
-  if (diaSelecionado && mes && ano) {
-    const dia = diaSelecionado.dataset.dia;
-    document.getElementById("dataAtividade").value = `${ano}-${mes}-${dia}`;
-  }
-
-  // Alterna visibilidade com estilo direto
-  form.style.display = form.style.display === "none" ? "block" : "none";
-}
-
-
-
-window.fecharChecklistModal = fecharChecklistModal;
-window.carregarChecklistsPorPlataforma = carregarChecklistsPorPlataforma;
-
 
 
 window.abrirChecklistModal = abrirChecklistModal;
