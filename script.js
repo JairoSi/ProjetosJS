@@ -233,8 +233,10 @@ if (formaDescricao === "livre") {
         editando = false;
         idEdicao = null;
         document.getElementById("btnConfirmar").innerText = "Confirmar";
-        updateCalendar(user.uid);
         toggleFormulario();
+        limparFormularioAtividade();
+        updateCalendar(user.uid);
+      
       } else {
         // Criar novo
         await registrarPlataformaSeNova(plataformaSelecionada, user);
@@ -244,6 +246,7 @@ if (formaDescricao === "livre") {
 
         const novaAtividade = {
           data,
+          data_fim: document.getElementById("dataFimAtividade").value,
           plataforma: plataformaSelecionada,
           responsavel,
           descricao: formaDescricao === "livre" ? descricao : "",
@@ -263,11 +266,14 @@ if (formaDescricao === "livre") {
         
         await push(ref(db, "ops_activities"), novaAtividade);
         console.log("Atividade registrada com sucesso!");
-        updateCalendar(user.uid);
+        limparFormularioAtividade();
         toggleFormulario();
+        updateCalendar(user.uid);
+        
         
       }
     } else {
+      limparFormularioAtividade();
       alert("Usuário não autenticado!");
     }
   });
@@ -281,14 +287,46 @@ async function editarLancamento(id) {
 
     const dados = snapshot.val();
 
-    document.getElementById("dataAtividade").value = dados.data;
-    document.getElementById("plataforma").value = dados.plataforma;
-    document.getElementById("responsavel").value = dados.responsavel;
-    document.getElementById("descricao").value = dados.descricao;
-    document.getElementById("status").value = dados.status;
-    document.getElementById("observacoes").value = dados.observacoes;
-    document.getElementById("formaLancamento").value = dados.forma_lancamento;
+    // Campos simples
+    document.getElementById("dataAtividade").value = dados.data || "";
+    document.getElementById("dataFimAtividade").value = dados.data_fim || "";
+    document.getElementById("plataforma").value = dados.plataforma || "";
+    document.getElementById("responsavel").value = dados.responsavel || "";
+    document.getElementById("status").value = dados.status || "pendente";
+    document.getElementById("formaLancamento").value = dados.forma_lancamento || "manual";
+    document.getElementById("observacoes").value = dados.observacoes || "";
 
+    // Tipo de descrição
+    if (dados.forma_descricao === "livre") {
+      document.getElementById("radioLivre").checked = true;
+      document.getElementById("descricao").value = dados.descricao || "";
+    } else if (dados.forma_descricao === "checklist") {
+      document.getElementById("radioChecklist").checked = true;
+
+      // Tenta selecionar o checklist pelo nome
+      const seletor = document.getElementById("seletorChecklist");
+      const opcoes = Array.from(seletor.options);
+      const indice = opcoes.findIndex(opt => opt.text === dados.checklist_usado);
+      if (indice !== -1) seletor.selectedIndex = indice;
+
+      // Exibe os itens já marcados
+      const area = document.getElementById("areaChecklistRenderizado");
+      area.innerHTML = "";
+
+      (dados.checklist_itens || []).forEach((item, index) => {
+        const div = document.createElement("div");
+        div.className = "checklist-item";
+        div.innerHTML = `
+          <input type="checkbox" id="item-${index}" data-index="${index}" ${item.feito ? "checked" : ""}>
+          <label for="item-${index}">${index + 1}. ${item.descricao}</label>
+        `;
+        area.appendChild(div);
+      });
+    }
+
+    configurarAlternanciaDescricao();
+
+    // Ativa modo edição
     editando = true;
     idEdicao = id;
 
@@ -298,6 +336,7 @@ async function editarLancamento(id) {
     console.error("Erro ao buscar para edição:", e);
   }
 }
+
 
 
 async function carregarLancamentos(uid, mostrarTodos = false) {
@@ -348,6 +387,22 @@ function renderizarLancamentos(lancamentos) {
 
   lancamentos.forEach((lancamento) => {
     const div = document.createElement("div");
+    let diasRestantes = '';
+if (lancamento.data_fim) {
+  const hoje = new Date();
+  const fim = new Date(lancamento.data_fim);
+  const diffTime = fim - hoje;
+  const diffDias = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+  if (diffDias > 0) {
+    diasRestantes = `⏳ ${diffDias} dia(s) restantes`;
+  } else if (diffDias === 0) {
+    diasRestantes = `⚠️ Finaliza hoje`;
+  } else {
+    diasRestantes = `❌ Atrasado há ${Math.abs(diffDias)} dia(s)`;
+  }
+}
+
     div.className = "launch";
     div.innerHTML = `
     <h3>#${lancamento.id_sequencial || '—'} - ${lancamento.plataforma} - ${lancamento.responsavel}</h3>
@@ -371,6 +426,8 @@ function renderizarLancamentos(lancamentos) {
 
     <p><strong>Observações:</strong> ${lancamento.observacoes || "—"}</p>
     <small><strong>Criado por:</strong> ${lancamento.criado_por || "Desconhecido"}</small><br>
+    ${lancamento.data_fim ? `<p><strong>Previsão de Fim:</strong> ${lancamento.data_fim}</p>` : ""}
+    ${diasRestantes ? `<p><strong>Status da Previsão:</strong> ${diasRestantes}</p>` : ""}
     ${lancamento.editado_por ? `<small><strong>Editado por:</strong> ${lancamento.editado_por}</small><br>` : ""}
     <span class="status ${lancamento.status}">${lancamento.status}</span>
     <br />
@@ -742,9 +799,27 @@ function toggleFormulario() {
   }
 
   // Alterna visibilidade com estilo direto
-  form.style.display = form.style.display === "none" ? "block" : "none";
+  const mostrando = form.style.display === "none";
+form.style.display = mostrando ? "block" : "none";
+if (!mostrando) limparFormularioAtividade();
+
 }
 
+function limparFormularioAtividade() {
+  document.getElementById("dataAtividade").value = "";
+  document.getElementById("dataFimAtividade").value = "";
+  document.getElementById("plataforma").value = "";
+  document.getElementById("novaPlataforma").value = "";
+  document.getElementById("novaPlataformaContainer").style.display = "none";
+  document.getElementById("responsavel").value = "";
+  document.getElementById("descricao").value = "";
+  document.getElementById("status").value = "pendente";
+  document.getElementById("formaLancamento").value = "manual";
+  document.getElementById("observacoes").value = "";
+  document.getElementById("radioChecklist").checked = true;
+  document.getElementById("seletorChecklist").selectedIndex = 0;
+  document.getElementById("areaChecklistRenderizado").innerHTML = "";
+}
 
 
 window.fecharChecklistModal = fecharChecklistModal;
