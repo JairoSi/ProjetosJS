@@ -236,8 +236,6 @@ if (formaDescricao === "livre") {
         toggleFormulario();
         limparFormularioAtividade();
         updateCalendar(user.uid);
-        
-
       
       } else {
         // Criar novo
@@ -539,8 +537,6 @@ function changeMonth(direction, uid, mostrarTodos = false) {
 onAuthStateChanged(auth, (user) => {
   if (user) {
     updateCalendar(user.uid);
-    document.getElementById("app").style.visibility = "visible";
-
     carregarPlataformasExistentes();
 
 

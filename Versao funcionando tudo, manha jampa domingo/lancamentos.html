@@ -183,18 +183,13 @@
     <!--  <textarea id="descricao" placeholder="Explique a tarefa" rows="3"></textarea> -->
 
     <label>Forma de preenchimento</label>
-    <div style="display: flex; gap: 20px; margin: 10px 0;">
-      <label style="display: flex; align-items: center; gap: 8px;">
-        <input type="radio" id="radioChecklist" name="formaDescricao" value="checklist" checked>
-        Usar checklist
-      </label>
-    
-      <label style="display: flex; align-items: center; gap: 8px;">
-        <input type="radio" id="radioLivre" name="formaDescricao" value="livre">
-        Escrever livremente
-      </label>
-    </div>
-    
+<div style="margin-bottom: 10px;">
+  <input type="radio" id="radioChecklist" name="formaDescricao" value="checklist" checked>
+  <label for="radioChecklist">Usar checklist</label>
+
+  <input type="radio" id="radioLivre" name="formaDescricao" value="livre" style="margin-left: 20px;">
+  <label for="radioLivre">Escrever livremente</label>
+</div>
 
 <!-- Bloco de checklist -->
 <div id="blocoChecklist">
