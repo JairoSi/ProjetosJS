@@ -71,6 +71,7 @@ async function gerarIdSequencial() {
 
 async function adicionarAtividade(data, plataforma, responsavel, descricao, status, observacoes, forma_lancamento, uid) {
   try {
+    const prioridade = document.getElementById("prioridade").value;
     const idSequencial = await gerarIdSequencial();
     await push(ref(db, "ops_activities"), {
       id_sequencial: idSequencial,
@@ -82,6 +83,7 @@ async function adicionarAtividade(data, plataforma, responsavel, descricao, stat
       status,
       observacoes,
       forma_lancamento,
+      prioridade,
       userId: uid,
       criado_por: auth.currentUser.displayName || auth.currentUser.email,
       criado_em: new Date().toISOString()
@@ -216,7 +218,9 @@ if (formaDescricao === "livre") {
           checklist_usado: formaDescricao === "checklist" ? checklist_usado : "",
           checklist_itens: formaDescricao === "checklist" ? checklist_itens : [],
           editado_em: new Date().toISOString(),
-          editado_por: auth.currentUser.displayName || auth.currentUser.email
+          editado_por: auth.currentUser.displayName || auth.currentUser.email,
+          prioridade: document.getElementById("prioridade").value,
+
         };
         
         const refAtualizacao = ref(db, "ops_activities/" + idEdicao);
@@ -260,7 +264,8 @@ if (formaDescricao === "livre") {
           criado_em: new Date().toISOString(),
           forma_descricao: formaDescricao,
           checklist_usado: formaDescricao === "checklist" ? checklist_usado : "",
-          checklist_itens: formaDescricao === "checklist" ? checklist_itens : []
+          checklist_itens: formaDescricao === "checklist" ? checklist_itens : [],
+          prioridade: document.getElementById("prioridade").value
         };
         
         const idSequencial = await gerarIdSequencial();
@@ -297,6 +302,8 @@ async function editarLancamento(id) {
     document.getElementById("status").value = dados.status || "pendente";
     document.getElementById("formaLancamento").value = dados.forma_lancamento || "manual";
     document.getElementById("observacoes").value = dados.observacoes || "";
+    document.getElementById("prioridade").value = dados.prioridade || "baixa";
+
 
     // Tipo de descrição
     if (dados.forma_descricao === "livre") {
@@ -423,10 +430,19 @@ if (lancamento.data_fim) {
       : "<p>—</p>"
     }
     
-    
+    ${lancamento.descricao ? `<p><strong>Descrição:</strong> ${lancamento.descricao}</p>` : ""}
+
+    <p><strong>Prioridade:</strong> ${
+    lancamento.prioridade === "alta" ? "🔴 Alta" :
+    lancamento.prioridade === "media" ? "🟡 Média" :
+    lancamento.prioridade === "baixa" ? "🔵 Baixa" :
+    "—"
+    }</p>
+
 
 
     <p><strong>Observações:</strong> ${lancamento.observacoes || "—"}</p>
+  
     <small><strong>Criado por:</strong> ${lancamento.criado_por || "Desconhecido"}</small><br>
     ${lancamento.data_fim ? `<p><strong>Previsão de Fim:</strong> ${lancamento.data_fim}</p>` : ""}
     ${diasRestantes ? `<p><strong>Status da Previsão:</strong> ${diasRestantes}</p>` : ""}
@@ -539,7 +555,7 @@ function changeMonth(direction, uid, mostrarTodos = false) {
 onAuthStateChanged(auth, (user) => {
   if (user) {
     updateCalendar(user.uid);
-    document.getElementById("app").style.visibility = "visible";
+    
 
     carregarPlataformasExistentes();
 
@@ -876,6 +892,9 @@ async function editarChecklistSelecionado() {
 
   const checklist = snapshot.val();
 
+
+  
+
   // Preenche os campos do modal com os dados
   document.getElementById("tituloChecklist").value = checklist.titulo || "";
 
@@ -895,6 +914,7 @@ async function editarChecklistSelecionado() {
 }
 
 
+
 window.fecharChecklistModal = fecharChecklistModal;
 window.carregarChecklistsPorPlataforma = carregarChecklistsPorPlataforma;
 
@@ -903,6 +923,36 @@ window.carregarChecklistsPorPlataforma = carregarChecklistsPorPlataforma;
 window.abrirChecklistModal = abrirChecklistModal;
 window.editarChecklistSelecionado = editarChecklistSelecionado;
 
+
+
+
+async function excluirChecklistSelecionado() {
+  const seletor = document.getElementById("seletorChecklist");
+  const checklistId = seletor.value;
+
+  if (!checklistId) {
+    alert("Selecione um checklist para excluir.");
+    return;
+  }
+
+  const confirmacao = confirm("Tem certeza que deseja excluir este checklist?");
+  if (!confirmacao) return;
+
+  try {
+    await remove(ref(db, `ops_checklists/${checklistId}`));
+    alert("✅ Checklist excluído com sucesso.");
+    
+    // Limpar campos e recarregar lista
+    document.getElementById("areaChecklistRenderizado").innerHTML = "";
+    seletor.value = "";
+    carregarChecklistsPorPlataforma(document.getElementById("plataforma").value);
+  } catch (error) {
+    console.error("Erro ao excluir checklist:", error);
+    alert("❌ Erro ao excluir checklist. Verifique o console.");
+  }
+}
+
+document.getElementById("btnExcluirChecklist")?.addEventListener("click", excluirChecklistSelecionado);
 
 
 window.verificarOutraPlataforma = verificarOutraPlataforma;

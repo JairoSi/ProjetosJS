@@ -71,6 +71,7 @@ async function gerarIdSequencial() {
 
 async function adicionarAtividade(data, plataforma, responsavel, descricao, status, observacoes, forma_lancamento, uid) {
   try {
+    const prioridade = document.getElementById("prioridade").value;
     const idSequencial = await gerarIdSequencial();
     await push(ref(db, "ops_activities"), {
       id_sequencial: idSequencial,
@@ -82,6 +83,7 @@ async function adicionarAtividade(data, plataforma, responsavel, descricao, stat
       status,
       observacoes,
       forma_lancamento,
+      prioridade,
       userId: uid,
       criado_por: auth.currentUser.displayName || auth.currentUser.email,
       criado_em: new Date().toISOString()
@@ -94,10 +96,7 @@ async function adicionarAtividade(data, plataforma, responsavel, descricao, stat
   }
 }
 
-function toggleFormulario() {
-  const form = document.getElementById("form-atividade");
-  form.style.display = form.style.display === "none" ? "block" : "none";
-}
+
 
 function carregarPlataformasExistentes() {
   const select = document.getElementById("plataforma");
@@ -200,22 +199,30 @@ if (formaDescricao === "livre") {
         const snapshot = await get(child(ref(db), "ops_activities/" + idEdicao));
         if (!snapshot.exists()) return alert("Erro: não foi possível recuperar o lançamento para edição.");
       
+        
+
+
         const dadosAnteriores = snapshot.val();
       
         const atualizacao = {
-          ...dadosAnteriores, // mantém tudo o que já existia
+          ...dadosAnteriores,
           data,
           plataforma: plataformaSelecionada,
           responsavel,
-          descricao,
+          descricao: formaDescricao === "livre" ? descricao : "",
           status,
           observacoes,
           forma_lancamento,
           userId: user.uid,
+          forma_descricao: formaDescricao,
+          checklist_usado: formaDescricao === "checklist" ? checklist_usado : "",
+          checklist_itens: formaDescricao === "checklist" ? checklist_itens : [],
           editado_em: new Date().toISOString(),
-          editado_por: auth.currentUser.displayName || auth.currentUser.email
-        };
+          editado_por: auth.currentUser.displayName || auth.currentUser.email,
+          prioridade: document.getElementById("prioridade").value,
 
+        };
+        
         const refAtualizacao = ref(db, "ops_activities/" + idEdicao);
         await set(refAtualizacao, atualizacao);
 
@@ -230,8 +237,12 @@ if (formaDescricao === "livre") {
         editando = false;
         idEdicao = null;
         document.getElementById("btnConfirmar").innerText = "Confirmar";
-        updateCalendar(user.uid);
         toggleFormulario();
+        limparFormularioAtividade();
+        updateCalendar(user.uid);
+        
+
+      
       } else {
         // Criar novo
         await registrarPlataformaSeNova(plataformaSelecionada, user);
@@ -241,6 +252,7 @@ if (formaDescricao === "livre") {
 
         const novaAtividade = {
           data,
+          data_fim: document.getElementById("dataFimAtividade").value,
           plataforma: plataformaSelecionada,
           responsavel,
           descricao: formaDescricao === "livre" ? descricao : "",
@@ -252,7 +264,8 @@ if (formaDescricao === "livre") {
           criado_em: new Date().toISOString(),
           forma_descricao: formaDescricao,
           checklist_usado: formaDescricao === "checklist" ? checklist_usado : "",
-          checklist_itens: formaDescricao === "checklist" ? checklist_itens : []
+          checklist_itens: formaDescricao === "checklist" ? checklist_itens : [],
+          prioridade: document.getElementById("prioridade").value
         };
         
         const idSequencial = await gerarIdSequencial();
@@ -260,11 +273,14 @@ if (formaDescricao === "livre") {
         
         await push(ref(db, "ops_activities"), novaAtividade);
         console.log("Atividade registrada com sucesso!");
-        updateCalendar(user.uid);
+        limparFormularioAtividade();
         toggleFormulario();
+        updateCalendar(user.uid);
+        
         
       }
     } else {
+      limparFormularioAtividade();
       alert("Usuário não autenticado!");
     }
   });
@@ -278,14 +294,48 @@ async function editarLancamento(id) {
 
     const dados = snapshot.val();
 
-    document.getElementById("dataAtividade").value = dados.data;
-    document.getElementById("plataforma").value = dados.plataforma;
-    document.getElementById("responsavel").value = dados.responsavel;
-    document.getElementById("descricao").value = dados.descricao;
-    document.getElementById("status").value = dados.status;
-    document.getElementById("observacoes").value = dados.observacoes;
-    document.getElementById("formaLancamento").value = dados.forma_lancamento;
+    // Campos simples
+    document.getElementById("dataAtividade").value = dados.data || "";
+    document.getElementById("dataFimAtividade").value = dados.data_fim || "";
+    document.getElementById("plataforma").value = dados.plataforma || "";
+    document.getElementById("responsavel").value = dados.responsavel || "";
+    document.getElementById("status").value = dados.status || "pendente";
+    document.getElementById("formaLancamento").value = dados.forma_lancamento || "manual";
+    document.getElementById("observacoes").value = dados.observacoes || "";
+    document.getElementById("prioridade").value = dados.prioridade || "baixa";
 
+
+    // Tipo de descrição
+    if (dados.forma_descricao === "livre") {
+      document.getElementById("radioLivre").checked = true;
+      document.getElementById("descricao").value = dados.descricao || "";
+    } else if (dados.forma_descricao === "checklist") {
+      document.getElementById("radioChecklist").checked = true;
+
+      // Tenta selecionar o checklist pelo nome
+      const seletor = document.getElementById("seletorChecklist");
+      const opcoes = Array.from(seletor.options);
+      const indice = opcoes.findIndex(opt => opt.text === dados.checklist_usado);
+      if (indice !== -1) seletor.selectedIndex = indice;
+
+      // Exibe os itens já marcados
+      const area = document.getElementById("areaChecklistRenderizado");
+      area.innerHTML = "";
+
+      (dados.checklist_itens || []).forEach((item, index) => {
+        const div = document.createElement("div");
+        div.className = "checklist-item";
+        div.innerHTML = `
+          <input type="checkbox" id="item-${index}" data-index="${index}" ${item.feito ? "checked" : ""}>
+          <label for="item-${index}">${index + 1}. ${item.descricao}</label>
+        `;
+        area.appendChild(div);
+      });
+    }
+
+    configurarAlternanciaDescricao();
+
+    // Ativa modo edição
     editando = true;
     idEdicao = id;
 
@@ -295,6 +345,7 @@ async function editarLancamento(id) {
     console.error("Erro ao buscar para edição:", e);
   }
 }
+
 
 
 async function carregarLancamentos(uid, mostrarTodos = false) {
@@ -345,12 +396,56 @@ function renderizarLancamentos(lancamentos) {
 
   lancamentos.forEach((lancamento) => {
     const div = document.createElement("div");
+    let diasRestantes = '';
+if (lancamento.data_fim) {
+  const hoje = new Date();
+  const fim = new Date(lancamento.data_fim);
+  const diffTime = fim - hoje;
+  const diffDias = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+  if (diffDias > 0) {
+    diasRestantes = `⏳ ${diffDias} dia(s) restantes`;
+  } else if (diffDias === 0) {
+    diasRestantes = `⚠️ Finaliza hoje`;
+  } else {
+    diasRestantes = `❌ Atrasado há ${Math.abs(diffDias)} dia(s)`;
+  }
+}
+
     div.className = "launch";
     div.innerHTML = `
     <h3>#${lancamento.id_sequencial || '—'} - ${lancamento.plataforma} - ${lancamento.responsavel}</h3>
-    <p>${lancamento.descricao}</p>
+
+  
+
+
+    ${lancamento.checklist_itens && lancamento.checklist_itens.length > 0
+      ? `<ul style="margin-left: 20px; padding-left: 0;">${lancamento.checklist_itens
+          .map((item, index) =>
+            `<li>
+              <input type="checkbox" disabled ${item.feito ? "checked" : ""} id="check-${lancamento.id}-${index}">
+              <label for="check-${lancamento.id}-${index}">${item.descricao}</label>
+            </li>`
+          ).join("")}</ul>`
+      : "<p>—</p>"
+    }
+    
+    ${lancamento.descricao ? `<p><strong>Descrição:</strong> ${lancamento.descricao}</p>` : ""}
+
+    <p><strong>Prioridade:</strong> ${
+    lancamento.prioridade === "alta" ? "🔴 Alta" :
+    lancamento.prioridade === "media" ? "🟡 Média" :
+    lancamento.prioridade === "baixa" ? "🔵 Baixa" :
+    "—"
+    }</p>
+
+
+
     <p><strong>Observações:</strong> ${lancamento.observacoes || "—"}</p>
+  
     <small><strong>Criado por:</strong> ${lancamento.criado_por || "Desconhecido"}</small><br>
+    ${lancamento.data_fim ? `<p><strong>Previsão de Fim:</strong> ${lancamento.data_fim}</p>` : ""}
+    ${diasRestantes ? `<p><strong>Status da Previsão:</strong> ${diasRestantes}</p>` : ""}
     ${lancamento.editado_por ? `<small><strong>Editado por:</strong> ${lancamento.editado_por}</small><br>` : ""}
     <span class="status ${lancamento.status}">${lancamento.status}</span>
     <br />
@@ -460,7 +555,19 @@ function changeMonth(direction, uid, mostrarTodos = false) {
 onAuthStateChanged(auth, (user) => {
   if (user) {
     updateCalendar(user.uid);
+    
+
     carregarPlataformasExistentes();
+
+
+
+    // Garante que o checklist carregue ao abrir formulário já com plataforma
+const plataformaSelecionada = document.getElementById("plataforma")?.value;
+if (plataformaSelecionada) {
+  carregarChecklistsPorPlataforma(plataformaSelecionada);
+}
+
+
 
     const mostrarTodosBtn = document.getElementById("toggleTodos");
     if (mostrarTodosBtn) {
@@ -664,6 +771,28 @@ function limparChecklistForm() {
   `;
 }
 
+
+// async function confirmarCriacaoChecklist() {
+//  const titulo = document.getElementById("tituloChecklist").value.trim();
+//  const plataforma = document.getElementById("plataforma").value;
+//  const inputs = document.querySelectorAll(".itemChecklistInput");
+
+//  const itens = Array.from(inputs)
+//    .map(input => input.value.trim())
+//    .filter(texto => texto.length > 0)
+//    .map(texto => ({ descricao: texto, feito: false }));
+
+//  if (!titulo || itens.length === 0) {
+//    return alert("Preencha o título e pelo menos um item.");
+//  }
+
+//  await salvarChecklist(titulo, plataforma, itens);
+//  alert("✅ Checklist salvo com sucesso!");
+
+//  document.getElementById("modalChecklist").style.display = "none";
+//  carregarChecklistsPorPlataforma(plataforma); // atualiza o seletor de checklists
+// }
+
 async function confirmarCriacaoChecklist() {
   const titulo = document.getElementById("tituloChecklist").value.trim();
   const plataforma = document.getElementById("plataforma").value;
@@ -678,18 +807,152 @@ async function confirmarCriacaoChecklist() {
     return alert("Preencha o título e pelo menos um item.");
   }
 
-  await salvarChecklist(titulo, plataforma, itens);
-  alert("✅ Checklist salvo com sucesso!");
+  const editandoId = document.getElementById("modalChecklist").dataset.editando;
+
+  const checklist = {
+    id_plataforma: plataforma,
+    titulo,
+    itens,
+    criado_por: auth.currentUser.displayName || auth.currentUser.email,
+    criado_em: new Date().toISOString()
+  };
+
+  if (editandoId) {
+    await set(ref(db, "ops_checklists/" + editandoId), checklist);
+    alert("✅ Checklist atualizado com sucesso!");
+  } else {
+    await push(ref(db, "ops_checklists"), checklist);
+    alert("✅ Checklist salvo com sucesso!");
+  }
 
   document.getElementById("modalChecklist").style.display = "none";
-  carregarChecklistsPorPlataforma(plataforma); // atualiza o seletor de checklists
+  document.getElementById("modalChecklist").dataset.editando = "";
+
+  carregarChecklistsPorPlataforma(plataforma); // atualiza o seletor
 }
+
+
+
 
 window.confirmarCriacaoChecklist = confirmarCriacaoChecklist;
 window.adicionarCampoChecklist = adicionarCampoChecklist;
 
+function fecharChecklistModal() {
+  document.getElementById("modalChecklist").style.display = "none";
+}
+
+
+
+function toggleFormulario() {
+  const form = document.getElementById("form-atividade");
+  if (!form) return;
+
+  const diaSelecionado = document.querySelector(".dia.selecionado");
+  const mes = document.getElementById("mes")?.dataset.mes;
+  const ano = document.getElementById("ano")?.textContent;
+
+  if (diaSelecionado && mes && ano) {
+    const dia = diaSelecionado.dataset.dia;
+    document.getElementById("dataAtividade").value = `${ano}-${mes}-${dia}`;
+  }
+
+  // Alterna visibilidade com estilo direto
+  const mostrando = form.style.display === "none";
+form.style.display = mostrando ? "block" : "none";
+if (!mostrando) limparFormularioAtividade();
+
+}
+
+function limparFormularioAtividade() {
+  document.getElementById("dataAtividade").value = "";
+  document.getElementById("dataFimAtividade").value = "";
+  document.getElementById("plataforma").value = "";
+  document.getElementById("novaPlataforma").value = "";
+  document.getElementById("novaPlataformaContainer").style.display = "none";
+  document.getElementById("responsavel").value = "";
+  document.getElementById("descricao").value = "";
+  document.getElementById("status").value = "pendente";
+  document.getElementById("formaLancamento").value = "manual";
+  document.getElementById("observacoes").value = "";
+  document.getElementById("radioChecklist").checked = true;
+  document.getElementById("seletorChecklist").selectedIndex = 0;
+  document.getElementById("areaChecklistRenderizado").innerHTML = "";
+}
+
+// 🔧 NOVO: Editar checklist já existente
+async function editarChecklistSelecionado() {
+  const seletor = document.getElementById("seletorChecklist");
+  const idChecklist = seletor.value;
+  if (!idChecklist) return alert("Selecione um checklist para editar.");
+
+  const refChecklist = ref(db, "ops_checklists/" + idChecklist);
+  const snapshot = await get(refChecklist);
+
+  if (!snapshot.exists()) return alert("Checklist não encontrado.");
+
+  const checklist = snapshot.val();
+
+
+  
+
+  // Preenche os campos do modal com os dados
+  document.getElementById("tituloChecklist").value = checklist.titulo || "";
+
+  const container = document.getElementById("itensChecklistContainer");
+  container.innerHTML = "";
+  checklist.itens.forEach((item, index) => {
+    const div = document.createElement("div");
+    div.className = "checklist-item";
+    div.innerHTML = `<input type="text" class="itemChecklistInput" value="${item.descricao}" />`;
+    container.appendChild(div);
+  });
+
+  // Marca que estamos em modo edição
+  document.getElementById("modalChecklist").dataset.editando = idChecklist;
+
+  document.getElementById("modalChecklist").style.display = "flex";
+}
+
+
+
+window.fecharChecklistModal = fecharChecklistModal;
+window.carregarChecklistsPorPlataforma = carregarChecklistsPorPlataforma;
+
+
 
 window.abrirChecklistModal = abrirChecklistModal;
+window.editarChecklistSelecionado = editarChecklistSelecionado;
+
+
+
+
+async function excluirChecklistSelecionado() {
+  const seletor = document.getElementById("seletorChecklist");
+  const checklistId = seletor.value;
+
+  if (!checklistId) {
+    alert("Selecione um checklist para excluir.");
+    return;
+  }
+
+  const confirmacao = confirm("Tem certeza que deseja excluir este checklist?");
+  if (!confirmacao) return;
+
+  try {
+    await remove(ref(db, `ops_checklists/${checklistId}`));
+    alert("✅ Checklist excluído com sucesso.");
+    
+    // Limpar campos e recarregar lista
+    document.getElementById("areaChecklistRenderizado").innerHTML = "";
+    seletor.value = "";
+    carregarChecklistsPorPlataforma(document.getElementById("plataforma").value);
+  } catch (error) {
+    console.error("Erro ao excluir checklist:", error);
+    alert("❌ Erro ao excluir checklist. Verifique o console.");
+  }
+}
+
+document.getElementById("btnExcluirChecklist")?.addEventListener("click", excluirChecklistSelecionado);
 
 
 window.verificarOutraPlataforma = verificarOutraPlataforma;

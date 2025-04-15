@@ -124,7 +124,7 @@
     <div id="content">
       <section id="launches">
         <h2>Lançamentos</h2>
-        <button onclick="abrirChecklistModal()" style="margin-top: 10px; padding: 10px; background: green; color: white; border-radius: 5px;">✅ Criar Checklist</button>
+        <button onclick="abrirChecklistModal()" style="margin-top: 10px; padding: 10px; background: rgb(0, 96, 128); color: white; border-radius: 5px;">✅ Criar Checklist</button>
       </section>
 
 
@@ -211,6 +211,12 @@
   <button type="button" onclick="editarChecklistSelecionado()" style="margin-top: 5px; background: #f39c12; color: white;">
     ✏️ Editar checklist selecionado
   </button>
+
+  <button id="btnExcluirChecklist" style="margin-top: 5px; background: #c0392b; color: white;">
+    🗑️ Excluir checklist
+  </button>
+  
+  
   
 
   <div id="areaChecklistRenderizado" style="margin-top: 10px;">
@@ -224,6 +230,12 @@
   <textarea id="descricao" rows="3" placeholder="Explique a tarefa..."></textarea>
 </div>
 
+<label for="prioridade">Prioridade</label>
+<select id="prioridade" required>
+  <option value="baixa">🔵 Baixa</option>
+  <option value="media">🟡 Média</option>
+  <option value="alta">🔴 Alta</option>
+</select>
 
       <label for="status">Status</label>
       <select id="status" required>
@@ -241,9 +253,9 @@
       <label for="observacoes">Observações</label>
       <textarea id="observacoes" rows="2"></textarea>
       <div class="form-actions">
-        <button id="btnConfirmar">Confirmar</button>
         <button onclick="toggleFormulario()" class="cancel">Cancelar</button>
-      </div>
+        <button id="btnConfirmar">Confirmar</button>
+      </div>      
     </div>
   </div>
 
